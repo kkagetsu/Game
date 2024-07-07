@@ -14,7 +14,7 @@
 関数　　XxxxXxxxXxxx()
 
 */
-typedef enum
+typedef enum  //誰のターン
 {
     TURN_PLYAER          //プレイヤーのターン　すべての敵の行動終了後　playerのターンに移す 
 ,   TURN_ENEMY           //エネミーのターン　　すべてのplayerの行動終了後　敵のターンに移す
@@ -22,8 +22,16 @@ typedef enum
 ,
 }E_TURN_T;
 
+typedef enum //盤面の状態
+{
+  MASU_NONE     //何もない
+, MASU_PLAYER   //プレイヤーがすでにいる
+, MASU_ENEMY    //エネミーがすでにいる
+
+};
 
 
+FPS g_fps;
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
 
@@ -47,9 +55,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     //裏画面に描写する
     SetDrawScreen(DX_SCREEN_BACK);
    
-    Cursor cursor;
+    
     Player player;
-   
+    Cursor cursor(player);
 
     //FPS初期化
     FPSInit();
@@ -107,9 +115,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
                     FieldLaOutDraw();
                     cursor.CursorDraw();
                     cursor.CursorControl();
+                    cursor.MapInfoShow();
                     player.PlayerMove();
                     //キャラのステータスを表示する
-                    player.StatusShow();
+                    
                
                 break;
             case END_SCENE:

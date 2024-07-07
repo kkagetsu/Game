@@ -1,8 +1,5 @@
 #include "fps.h"
-
-
-
- FPS g_fps;
+ extern FPS g_fps;
 
 //FPS‚Ì‰Šú‰»
 VOID FPSInit() {

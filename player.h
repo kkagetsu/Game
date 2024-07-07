@@ -47,4 +47,8 @@ public:
 	VOID PlayerMove();
 
 	VOID PlayerUiShow();
+
+	// gtp ゲッターメソッド
+	int getPosX() const { return posx; }
+	int getPosY() const { return posy; }
 }; 
