@@ -9,9 +9,22 @@ enum tagE_PLAYER_T
 ,   WAKU2__E
 ,   PIXEL__E
 ,   COUNT__E
-
-
 } ;
+
+
+enum tagE_PLAYER_UI_T 
+{
+	MOVE_E
+,   ATTACK_E
+,   ITEAM_E
+,   WAIT_E
+,   SPSKILL_E
+,   LEARNSKILL_E
+,   SKILL_1_E
+,   PLAYER_UI_COUNT
+
+};
+
 
 class Player {
 	//メンバー変数なので　前にm_を付けましょう 
@@ -29,10 +42,11 @@ private:
 	int dex;			    //命中　命中率じゃない
 	int lnt;			    //知力
 	int mdf;			    //魔法防御力
-	int agi;			    //素早さ
+	int agi;                //素早さ
 	int luc;			    //運
 	int move;               //移動力
 	int grHandle[COUNT__E];
+	int grHandleUI[PLAYER_UI_COUNT];
 	int posx, posy;
 
 public:
@@ -49,6 +63,6 @@ public:
 	VOID PlayerUiShow();
 
 	// gtp ゲッターメソッド
-	int getPosX() const { return posx; }
-	int getPosY() const { return posy; }
+	inline int getPosX() const { return posx; } //inline化
+	inline int getPosY() const { return posy; }	//inline化
 }; 

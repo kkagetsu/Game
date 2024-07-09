@@ -13,6 +13,12 @@ public:
 	char key[256];
 	
 	LONGLONG lastMoveTime;  //by gtp 最後に移動した時刻を記録する変数
+
+
+	bool isBlink;  // gtp点滅効果のための表示フラグ
+	LONGLONG lastBlinkTime;  // gtp最後に点滅した時刻
+	const LONGLONG blink = 800000;//gtp点滅間隔
+
 	bool isPlayerSelected; //by gtp プレイヤーが選択されているかを示すフラグ
 
 	Player& player; // /by gtp プレイヤーの参照

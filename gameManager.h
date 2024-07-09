@@ -5,7 +5,7 @@
 #include "DxLib.h"
 
 #define WINDOW_WIDTH         (800) //横
-#define WINDOW_HEIGHT        (600) //縦
+#define WINDOW_HEIGHT        (601) //縦
 #define WINDOW_BIT           (32)  //カラービット数
 						     	   
 #define ONE_SIZE             (40)  //マスのサイズ　

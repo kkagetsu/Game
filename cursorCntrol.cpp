@@ -16,6 +16,10 @@ Cursor::Cursor(Player& player) : player(player) {
 	
 	this->isPlayerSelected = false; //by gtp  初期状態ではプレイヤーは選択されていない
 
+	this->isBlink = true;  //gto 初期状態で表示
+	this->lastBlinkTime = GetNowHiPerformanceCount();  //gtp 現在の時刻を取得
+	
+
 	for (int i = 0; i < 256 ; i++) {
 
 		this->key[i] = 0;
@@ -68,14 +72,26 @@ VOID Cursor::CursorControl( ) {
 
 		}
 		//gtp
+		
+		//カーソルのｘｙ座標　等于　当playerの現座標の場合　isPlayerSelected＝true;
 		this->isPlayerSelected = (this->x1 == player.getPosX() * MASU___SIZE && this->y1 == player.getPosY() * MASU___SIZE);
 	
 	}
 }
 VOID Cursor::CursorDraw() {
 
-		DrawBox(this->x1, this->y1, this->x2, this->y2, color, TRUE);
+	LONGLONG currentTime = GetNowHiPerformanceCount();
 
+	// 点滅の間隔が経過したら表示フラグを切り替える
+	if (currentTime - lastBlinkTime > blink) {
+		isBlink = !isBlink;
+		lastBlinkTime = currentTime;
+	}
+
+
+	if (isBlink) {
+		DrawBox(this->x1, this->y1, this->x2, this->y2, color, TRUE);
+	}
 
 	}
 

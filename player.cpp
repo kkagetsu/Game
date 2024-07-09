@@ -1,6 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "player.h"
 #include "playScene.h"
+#include "gameManager.h"
 
 Player::Player() {
 
@@ -25,7 +26,7 @@ Player::Player() {
 	this->posx = 0;
 	this->posy = 0;
 	memset(grHandle, NULL, sizeof(grHandle)); //画像のloadと画像を格納用の変数を分けてそれぞれ初期化する ここではゼロクリア
-
+	memset(grHandleUI, NULL, sizeof(grHandleUI));
 }
 
 VOID Player :: GraphicLoad() {
@@ -35,6 +36,15 @@ VOID Player :: GraphicLoad() {
 	grHandle[WAKU1__E] = LoadGraph("picture/player1/player_waku1.png");
 	grHandle[WAKU2__E] = LoadGraph("picture/player1/player_waku2.png");
 	grHandle[PIXEL__E] = LoadGraph("picture/player1/player_pixel.png");
+
+	grHandleUI[MOVE_E]      = LoadGraph("picture/player1_ui/move.png");
+    grHandleUI[ATTACK_E]	= LoadGraph("picture/player1_ui/attack.png");
+    grHandleUI[ITEAM_E]		= LoadGraph("picture/player1_ui/iteam.png");
+    grHandleUI[WAIT_E]		= LoadGraph("picture/player1_ui/wait.png");
+    grHandleUI[SPSKILL_E]	= LoadGraph("picture/player1_ui/wolf.png");
+    grHandleUI[LEARNSKILL_E]= LoadGraph("picture/player1_ui/book.png");
+    grHandleUI[SKILL_1_E]   = LoadGraph("picture/player1_ui/skill1.png");
+
 
 
 	//return true;
@@ -116,6 +126,9 @@ VOID Player::StatusShow() {
 	//luc
 	//DrawString(200 + 15 * 3, 490 + 15 * 4, "luc  %d", luc, 0xFFFFFF);
 	DrawFormatString(200 + 15 * 15, 490 + 15 * 4, 0xFFFFFF, "luc  %d", luc);
+
+
+	PlayerUiShow();
 }
 
 VOID Player::PlayerPosInit() {
@@ -151,11 +164,41 @@ VOID Player::PlayerMove() {
 }
 
 VOID Player::PlayerUiShow() {
+	//┃┃┃┃┃縦線
+	for (int i = 0; i <= 4; i++) {
+		DrawLine(560+i* MASU___SIZE, GRID_HEIGHT * MASU___SIZE, 
+			     560+i* MASU___SIZE, WINDOW_HEIGHT, 0xFF0000);
+	}
+	//横線
+	for (int j = 0; j <= 3; j++) {
+		DrawLine(560 , GRID_HEIGHT * MASU___SIZE + MASU___SIZE + j * MASU___SIZE,
+			560 + 4 * MASU___SIZE, GRID_HEIGHT * MASU___SIZE + MASU___SIZE + j * MASU___SIZE, 0xFF0000);
+	}
 
 
-	  
 
+		//x560y480 x560+40 y480+40
+	int moveGraphic = DrawExtendGraph(560 + 2, GRID_HEIGHT * MASU___SIZE + 2,
+		                        600 - 2, GRID_HEIGHT * MASU___SIZE+ MASU___SIZE - 2, grHandleUI[MOVE_E], TRUE);
+	if (moveGraphic == -1)
+	{
+		OutputDebugString("moveG エラー!!\n");
+	}
+	for (int i = 0; i <= PLAYER_UI_COUNT-4; i++) {
 
+		DrawExtendGraph(560 + i*MASU___SIZE + 2, GRID_HEIGHT * MASU___SIZE + 2,
+			600 + i * MASU___SIZE  - 2, GRID_HEIGHT * MASU___SIZE + MASU___SIZE - 2, grHandleUI[i], TRUE);
+	}
+	  //特性
+	    DrawExtendGraph(560 + 1 * MASU___SIZE + 2, GRID_HEIGHT * MASU___SIZE+ MASU___SIZE + 2,
+		600 + 1 * MASU___SIZE - 2, GRID_HEIGHT * MASU___SIZE + 2*MASU___SIZE - 2, grHandleUI[SPSKILL_E], TRUE);
 
+      //スキルアップ
+		DrawExtendGraph(560 + 3 * MASU___SIZE + 2, GRID_HEIGHT * MASU___SIZE + MASU___SIZE + 2,
+			600 + 3 * MASU___SIZE - 2, GRID_HEIGHT * MASU___SIZE + 2 * MASU___SIZE - 2, grHandleUI[LEARNSKILL_E], TRUE);
+
+	 //スキル１
+		DrawExtendGraph(560 + 0 * MASU___SIZE + 2, GRID_HEIGHT * MASU___SIZE + 2*MASU___SIZE + 2,
+			600 + 0 * MASU___SIZE - 2, GRID_HEIGHT * MASU___SIZE + 3 * MASU___SIZE - 2, grHandleUI[SKILL_1_E], TRUE);
 }
 
