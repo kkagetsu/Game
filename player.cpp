@@ -8,7 +8,7 @@ Player::Player() {
 	strcpy(this->name, "プレイヤー");
 	strcpy(this->job,"剣士");
 	strcpy(this->speSkill,"一匹狼");
-	strcpy(this->jobSkill[0], "スキル1");
+	strcpy(this->jobSkill[0], "双連撃");
 	strcpy(this->jobSkill[1], "スキル2");
 	strcpy(this->jobSkill[2], "スキル3");
 	this->level = 1;    
@@ -202,3 +202,39 @@ VOID Player::PlayerUiShow() {
 			600 + 0 * MASU___SIZE - 2, GRID_HEIGHT * MASU___SIZE + 3 * MASU___SIZE - 2, grHandleUI[SKILL_1_E], TRUE);
 }
 
+VOID PlayerUiUpdata() {
+	//カーソルをプレイヤ１指定しかつspaceを押した場合
+	//マップ　　→→→→→　プレイヤUI（メニュー）に移す (escすると前の一歩戻す)
+	// □の四角形が生成され（色緑）
+	// プレイヤメニュー　カーソルのx.yがプレイヤUIのアイコン座標関係がそれぞれ一致したら
+	// もう一回　spaceを押したら　それぞれの機能が指定できる
+
+	//移動
+
+	//通常攻撃　デバッグ対象がない為最後で作る
+
+	//アイテム
+
+	//待機　プレイヤの最大20%のHPと15%MPを回復する
+
+	//特性　パッシブスキル 効果紹介だけ　一匹狼：自分の１マスに味方がない場合　ステータス＋２
+
+	/*スキル レベルアップごとにスキルポイントが貰える　
+	スキル１　双連撃　対象に連撃の二回通常攻撃する　命中率75％/77.5%/80%/85%
+	命中率判定し　missの場合　当キャラの攻撃ターンを終了と見なす
+	命中の場合　通常攻撃の２回 Critical strikeを判定し
+	Critical strike判定成功　通常ダメージの1.5/1.65/1.8/2.0を対象に与える
+	MP消耗　７/9/11/9
+	冷却時間（cd）3T/3T/3T/2T
+	取得可能のキャラのレベル　0/2/4/6 
+	　
+	*/
+
+}
+
+VOID PlayerMove() {
+
+
+
+
+}

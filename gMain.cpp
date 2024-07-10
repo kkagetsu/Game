@@ -119,6 +119,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
                     player.PlayerMove();
                     //キャラのステータスを表示する
                     
+                    {
+                       // debug用
+                        int mx = 0;
+                        int my = 0;
+                        GetMousePoint(&mx, &my);
+
+                        DrawFormatString(250, 0, 0x000000, "x=%d,y=%d", mx, my);
+                    }
                
                 break;
             case END_SCENE:
