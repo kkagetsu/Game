@@ -5,10 +5,21 @@
 class Cursor {
 
 public:
-	int x1;
-	int x2;
-	int y1;
-	int y2;
+	int x1;       //カーソルの左上のｘ座標
+	int x2;       //カーソルの左上のｙ座標
+	int y1;       //カーソルの右下のｘ座標
+	int y2;       //カーソルの右下のｙ座標
+
+	BOOL mapCursor;//マップカーソルの出現／消失
+	
+
+	int playerX1; //playerUIカーソルの左上のｘ座標
+	int playerY1; //playerUIカーソルの左上のｙ座標
+	int playerX2; //playerUIカーソルの右下のｘ座標
+	int playerY2; //playerUIカーソルの右下のｙ座標
+
+	BOOL playerUICursor;//プレイヤUIカーソルの出現／消失
+
 	int color;
 	char key[256];
 	
@@ -24,22 +35,13 @@ public:
 	Player& player; // /by gtp プレイヤーの参照
 
 	Cursor(Player& player);
-	VOID CursorControl( );
-	VOID CursorDraw();
-	VOID MapInfoShow();
-	/****************************************************************************
-関数名：IsPlayerAction
-機能  : 指定されたプレイヤーは今動作できるか（条件：プレイヤーのターン　そして当プレイヤーが未行動）
-引数　：cx  int  (in)   カーソルの位置（ｘ座標）
-　　　　cy  int  (in)   カーソルの位置（ｙ座標）
-		E_TURN_T (in)   現在のプレイヤー　0:TURN_PLAYER / 1:TURN_ENEMY
-返却値:	TRUN_NONE	: コマを置くことはできない
-		TRUN_PLAYER	: 黒のコマを置いてよい
-		TRUN_ENEMY	: 白のコマを置いてよい
-*****************************************************************************/
+	VOID CursorControl();//カーソル制御
+	VOID CursorDraw();    //マップカーソル描画
+	VOID MapInfoShow();   //マップ上の地形情報を表示
 
-
-	
+	VOID PlayerControl(); //プレイヤUIカーソル制御
+	VOID PlayerUICursorDraw();    //playerUIカーソル描画
+	VOID Switching();//マップ選択からプレイヤ　プレイヤからマップ
 
 
 };

@@ -45,9 +45,9 @@ private:
 	int agi;                //素早さ
 	int luc;			    //運
 	int move;               //移動力
-	int grHandle[COUNT__E];
-	int grHandleUI[PLAYER_UI_COUNT];
-	int posx, posy;
+	int grHandle[COUNT__E]; //player１のたち絵
+	int grHandleUI[PLAYER_UI_COUNT];//player１のUI
+	int posx, posy;         //座標
 
 public:
 
@@ -62,7 +62,12 @@ public:
 
 	VOID PlayerUiShow();
 
-	// gtp ゲッターメソッド
+
+	VOID PlayerUiUpdata();
+
+
+	// gtp ゲッタ-座標
 	inline int getPosX() const { return posx; } //inline化
 	inline int getPosY() const { return posy; }	//inline化
+
 }; 

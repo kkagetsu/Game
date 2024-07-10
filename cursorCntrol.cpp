@@ -11,7 +11,18 @@ Cursor::Cursor(Player& player) : player(player) {
 	this->y1 = (GRID_HEIGHT - 1) * MASU___SIZE;
 	
 	this->y2 = GRID_HEIGHT * MASU___SIZE;
+
+	this->mapCursor = TRUE; //TRUEの場合　マップカーソル描画ON
 	
+
+
+	this->playerX1 = 560;
+	this->playerY1 = GRID_HEIGHT * MASU___SIZE;
+	this->playerX2 = 560 + MASU___SIZE;
+	this->playerY2 = GRID_HEIGHT * MASU___SIZE + MASU___SIZE;
+
+	this->playerUICursor = FALSE;//初期時不表示状態
+
 	this->color = GetColor(255, 255, 0);
 	
 	this->isPlayerSelected = false; //by gtp  初期状態ではプレイヤーは選択されていない
@@ -168,3 +179,62 @@ VOID Cursor::MapInfoShow() {
 	}
 }
 
+
+VOID Cursor ::PlayerUICursorDraw() {
+	
+	DrawBox(playerX1+1, playerY1+1,playerX2-1,playerY2-1,0x00ff00,FALSE);
+}
+
+
+VOID Cursor::PlayerControl() {
+
+	GetHitKeyStateAll(this->key);
+
+	// プレイヤーUIカーソルの移動距離
+	const int playerMinX = 560;
+	const int playerMaxX = 720;
+	const int playerMinY = 480;
+	const int playerMaxY = 600;
+
+	if (mapCursor == FALSE) { //FALSEの場合　プレイヤカーソル操作ON
+		if (this->key[KEY_INPUT_LEFT] == 1
+			&& this->playerX1 >= playerMinX) {
+			this->playerX1 = this->playerX1 + MASU___SIZE;
+			this->playerX2 = this->playerX2 + MASU___SIZE;
+
+		}
+
+		else if (this->key[KEY_INPUT_RIGHT] == 1
+			&& this->playerX1 <= playerMaxX) {
+			this->playerX1 = this->playerX1 - MASU___SIZE;
+			this->playerX2 = this->playerX2 - MASU___SIZE;
+
+		}
+		else if (this->key[KEY_INPUT_UP] == 1
+			&& this->y1 >= playerMinY) {
+			this->playerY1 = this->playerY1 + MASU___SIZE;
+			this->playerY2 = this->playerY2 + MASU___SIZE;
+
+		}
+		else if (this->key[KEY_INPUT_DOWN] == 1
+			&& this->y1 <= playerMaxY) {
+			this->playerY1 = this->playerY1 - MASU___SIZE;
+			this->playerY2 = this->playerY2 - MASU___SIZE;
+
+		}
+	}
+}
+
+VOID Cursor::Switching() {
+	
+	if (isPlayerSelected == TRUE && this->key[KEY_INPUT_SPACE] == 1)//カーソルをプレイヤ１指定しかつspaceを押した場合
+	{
+		
+		mapCursor = FALSE;        //FALSEの場合　マップカーソル描画OFF
+		PlayerUICursorDraw();     //そしてプレイヤUIカーソル描画する
+	
+	}
+
+
+}
+	
