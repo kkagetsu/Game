@@ -41,13 +41,15 @@ private:
 	int def;			    //防御力
 	int dex;			    //命中　命中率じゃない
 	int lnt;			    //知力
-	int mdf;			    //魔法防御力
+	int mdf;                //魔法防御力
 	int agi;                //素早さ
 	int luc;			    //運
 	int move;               //移動力
 	int grHandle[COUNT__E]; //player１のたち絵
 	int grHandleUI[PLAYER_UI_COUNT];//player１のUI
 	int posx, posy;         //座標
+	const int pUIMessageX = 730;   //プレイヤのUI情報の文字表示座標
+	const int pUIMessageY = 500;	//プレイヤのUI情報の文字表示座標
 
 public:
 
@@ -58,10 +60,14 @@ public:
 	
 	VOID PlayerPosInit();
 
-	VOID PlayerMove();
+	VOID PlayerPos();
 
 	VOID PlayerUiShow();
-
+	VOID PlayerMove1();
+	VOID PlayerMove2();
+	VOID PlayerAttack();
+	VOID PlayerItem();
+	VOID PlayerWait();
 
 	VOID PlayerUiUpdata();
 

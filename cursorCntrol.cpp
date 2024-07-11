@@ -12,7 +12,7 @@ Cursor::Cursor(Player& player) : player(player) {
 	
 	this->y2 = GRID_HEIGHT * MASU___SIZE;
 
-	this->mapCursor = TRUE; //TRUEの場合　マップカーソル描画ON
+	this->isMapCursor = TRUE; //TRUEの場合　マップカーソル描画ON
 	
 
 
@@ -21,7 +21,7 @@ Cursor::Cursor(Player& player) : player(player) {
 	this->playerX2 = 560 + MASU___SIZE;
 	this->playerY2 = GRID_HEIGHT * MASU___SIZE + MASU___SIZE;
 
-	this->playerUICursor = FALSE;//初期時不表示状態
+	this->isPlayerUICursor = FALSE;//初期時不表示状態
 
 	this->color = GetColor(255, 255, 0);
 	
@@ -45,7 +45,7 @@ VOID Cursor::CursorControl( ) {
 	LONGLONG currentTime = GetNowHiPerformanceCount();  // gtp 現在の時刻を取得
 
 	// gtp 移動のタイミングを制御するための間隔（マイクロ秒）
-	const LONGLONG moveInterval = 100000;  // gtp 0.2秒
+	const LONGLONG moveInterval = 100000;  // gtp 0.1秒
 
 	if (currentTime - lastMoveTime > moveInterval) {
 		if (this->key[KEY_INPUT_LEFT] == 1
@@ -190,50 +190,85 @@ VOID Cursor::PlayerControl() {
 
 	GetHitKeyStateAll(this->key);
 
+	LONGLONG currentTime = GetNowHiPerformanceCount();  // gtp 現在の時刻を取得
+
+	// gtp 移動のタイミングを制御するための間隔（マイクロ秒）
+	const LONGLONG moveInterval = 100000;  // gtp 0.1秒
+
 	// プレイヤーUIカーソルの移動距離
 	const int playerMinX = 560;
-	const int playerMaxX = 720;
+	const int playerMaxX = 680;
 	const int playerMinY = 480;
-	const int playerMaxY = 600;
+	const int playerMaxY = 560;
 
-	if (mapCursor == FALSE) { //FALSEの場合　プレイヤカーソル操作ON
+	if (currentTime - lastMoveTime > moveInterval) {
 		if (this->key[KEY_INPUT_LEFT] == 1
-			&& this->playerX1 >= playerMinX) {
-			this->playerX1 = this->playerX1 + MASU___SIZE;
-			this->playerX2 = this->playerX2 + MASU___SIZE;
-
+			&& this->playerX1 > playerMinX ) {
+			this->playerX1 = this->playerX1 - MASU___SIZE;
+			this->playerX2 = this->playerX2 - MASU___SIZE;
+			lastMoveTime = currentTime;
 		}
 
 		else if (this->key[KEY_INPUT_RIGHT] == 1
-			&& this->playerX1 <= playerMaxX) {
-			this->playerX1 = this->playerX1 - MASU___SIZE;
-			this->playerX2 = this->playerX2 - MASU___SIZE;
-
+			&& this->playerX1 < playerMaxX ) {
+			this->playerX1 = this->playerX1 + MASU___SIZE;
+			this->playerX2 = this->playerX2 + MASU___SIZE;
+			lastMoveTime = currentTime;
 		}
 		else if (this->key[KEY_INPUT_UP] == 1
-			&& this->y1 >= playerMinY) {
-			this->playerY1 = this->playerY1 + MASU___SIZE;
-			this->playerY2 = this->playerY2 + MASU___SIZE;
-
-		}
-		else if (this->key[KEY_INPUT_DOWN] == 1
-			&& this->y1 <= playerMaxY) {
+			&& this->playerY1 > playerMinY ) {
 			this->playerY1 = this->playerY1 - MASU___SIZE;
 			this->playerY2 = this->playerY2 - MASU___SIZE;
+			lastMoveTime = currentTime;
+		}
+		else if (this->key[KEY_INPUT_DOWN] == 1
+			&& this->playerY1 < playerMaxY ) {
+			this->playerY1 = this->playerY1 + MASU___SIZE;
+			this->playerY2 = this->playerY2 + MASU___SIZE;
+			lastMoveTime = currentTime;
+		}
+	}
+
+	if (this->playerX1 == 560 && this->playerY1 == 480) {
+		player.PlayerMove1();
+		if (this->key[KEY_INPUT_M] || this->key[KEY_INPUT_SPACE] == 1) {
+
+			player.PlayerMove2();
 
 		}
 	}
+	else if(this->playerX1 == 560 + MASU___SIZE   && this->playerY1 == 480){
+		player.PlayerAttack();
+    }
+	else if(this->playerX1 == 560 + 2*MASU___SIZE && this->playerY1 == 480){
+		player.PlayerItem();
+    }
+	else if(this->playerX1 == 560 + 3*MASU___SIZE && this->playerY1 == 480){
+		player.PlayerWait();
+    }
+	
+
+
 }
 
+//カーソル切り替え
 VOID Cursor::Switching() {
 	
 	if (isPlayerSelected == TRUE && this->key[KEY_INPUT_SPACE] == 1)//カーソルをプレイヤ１指定しかつspaceを押した場合
 	{
-		
-		mapCursor = FALSE;        //FALSEの場合　マップカーソル描画OFF
-		PlayerUICursorDraw();     //そしてプレイヤUIカーソル描画する
-	
+
+		isMapCursor = FALSE;        //FALSEの場合　マップカーソル描画OFF
 	}
+		
+		if (this->key[KEY_INPUT_X] == 1) {//プレイヤUIからエスケープ
+			
+			//レイヤUIカーソル描画OFFし　マップカーソル描画ON
+			isMapCursor = TRUE;
+			this->playerX1 = 560;
+			this->playerY1 = GRID_HEIGHT * MASU___SIZE;
+			this->playerX2 = 560 + MASU___SIZE;
+			this->playerY2 = GRID_HEIGHT * MASU___SIZE + MASU___SIZE;
+		}
 
 
 }
