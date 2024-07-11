@@ -10,7 +10,7 @@ public:
 	int y1;       //カーソルの右下のｘ座標
 	int y2;       //カーソルの右下のｙ座標
 
-	BOOL mapCursor;//マップカーソルの出現／消失
+	
 	
 
 	int playerX1; //playerUIカーソルの左上のｘ座標
@@ -18,19 +18,20 @@ public:
 	int playerX2; //playerUIカーソルの右下のｘ座標
 	int playerY2; //playerUIカーソルの右下のｙ座標
 
-	BOOL playerUICursor;//プレイヤUIカーソルの出現／消失
+	
 
 	int color;
 	char key[256];
 	
+
 	LONGLONG lastMoveTime;  //by gtp 最後に移動した時刻を記録する変数
-
-
-	bool isBlink;  // gtp点滅効果のための表示フラグ
 	LONGLONG lastBlinkTime;  // gtp最後に点滅した時刻
 	const LONGLONG blink = 800000;//gtp点滅間隔
 
-	bool isPlayerSelected; //by gtp プレイヤーが選択されているかを示すフラグ
+	BOOL isPlayerUICursor;//プレイヤUIカーソルの出現／消失
+	BOOL isMapCursor;//マップカーソルの出現／消失
+	BOOL isBlink;  // gtp点滅効果のための表示フラグ
+	BOOL isPlayerSelected; //by gtp プレイヤーが選択されているかを示すフラグ
 
 	Player& player; // /by gtp プレイヤーの参照
 

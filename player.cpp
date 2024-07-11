@@ -22,9 +22,11 @@ Player::Player() {
 	this->mdf = 7;	  //
 	this->agi = 5;	  //
 	this->luc = 8;	  //クリティカルヒット率=(luck*1.25%) ダメージ attack x 1.5
-	this->move = 2;   //移動量
+	this->move = 3;   //移動量
 	this->posx = 0;
 	this->posy = 0;
+	
+
 	memset(grHandle, NULL, sizeof(grHandle)); //画像のloadと画像を格納用の変数を分けてそれぞれ初期化する ここではゼロクリア
 	memset(grHandleUI, NULL, sizeof(grHandleUI));
 }
@@ -146,7 +148,7 @@ VOID Player::PlayerPosInit() {
 		            TRUE);
 
 }
-VOID Player::PlayerMove() {
+VOID Player::PlayerPos() {
 
 	int playmove = DrawExtendGraph(MASU___SIZE * posx,
 		MASU___SIZE * posy,
@@ -178,16 +180,22 @@ VOID Player::PlayerUiShow() {
 
 
 		//x560y480 x560+40 y480+40
-	int moveGraphic = DrawExtendGraph(560 + 2, GRID_HEIGHT * MASU___SIZE + 2,
-		                        600 - 2, GRID_HEIGHT * MASU___SIZE+ MASU___SIZE - 2, grHandleUI[MOVE_E], TRUE);
-	if (moveGraphic == -1)
-	{
-		OutputDebugString("moveG エラー!!\n");
-	}
+	//移動アイコン
+	//int moveGraphic = DrawExtendGraph(560 + 2, GRID_HEIGHT * MASU___SIZE + 2,
+	//	                        600 - 2, GRID_HEIGHT * MASU___SIZE+ MASU___SIZE - 2, grHandleUI[MOVE_E], TRUE);
+	//if (moveGraphic == -1)
+	//{
+	//	OutputDebugString("moveG エラー!!\n");
+	//}
 	for (int i = 0; i <= PLAYER_UI_COUNT-4; i++) {
 
+		// 0移動アイコン 1攻撃　2アイテム　3待機
 		DrawExtendGraph(560 + i*MASU___SIZE + 2, GRID_HEIGHT * MASU___SIZE + 2,
 			600 + i * MASU___SIZE  - 2, GRID_HEIGHT * MASU___SIZE + MASU___SIZE - 2, grHandleUI[i], TRUE);
+
+
+
+
 	}
 	  //特性
 	    DrawExtendGraph(560 + 1 * MASU___SIZE + 2, GRID_HEIGHT * MASU___SIZE+ MASU___SIZE + 2,
@@ -200,16 +208,73 @@ VOID Player::PlayerUiShow() {
 	 //スキル１
 		DrawExtendGraph(560 + 0 * MASU___SIZE + 2, GRID_HEIGHT * MASU___SIZE + 2*MASU___SIZE + 2,
 			600 + 0 * MASU___SIZE - 2, GRID_HEIGHT * MASU___SIZE + 3 * MASU___SIZE - 2, grHandleUI[SKILL_1_E], TRUE);
+
+
+
+	
+}
+VOID Player::PlayerMove1(){
+
+	DrawString(pUIMessageX, pUIMessageY,"Move\nkey: m",0xffffff);
+	
+
 }
 
-VOID PlayerUiUpdata() {
-	//カーソルをプレイヤ１指定しかつspaceを押した場合
-	//マップ　　→→→→→　プレイヤUI（メニュー）に移す (escすると前の一歩戻す)
-	// □の四角形が生成され（色緑）
-	// プレイヤメニュー　カーソルのx.yがプレイヤUIのアイコン座標関係がそれぞれ一致したら
-	// もう一回　spaceを押したら　それぞれの機能が指定できる
+VOID Player::PlayerAttack(){
+
+	DrawString(pUIMessageX, pUIMessageY, "Attack\nkey: a", 0xffffff);
+
+	if (true)
+	{
+
+	}
+
+}
+VOID Player::PlayerItem(){
+
+	DrawString(pUIMessageX, pUIMessageY, "Item\nkey: b", 0xffffff);
+
+
+}
+VOID Player::PlayerMove2() {
+
+	for (int dy = -move; dy <= move; ++dy) {
+		for (int dx = -move; dx <= move; ++dx) {
+			if (abs(dx) + abs(dy) <= move) { // ダイヤモンド形の範囲内かをチェック
+				int x = posx + dx;
+				int y = posy + dy;
+
+			// マップ範囲内かどうかをチェック
+				if (x >= 0 && x < GRID__WIDTH && y >= 0 && y < GRID_HEIGHT) {
+					// マスの中心を計算
+					int drawX1 = x * MASU___SIZE;
+					int drawY1 = y * MASU___SIZE;
+					int drawX2 = drawX1 + MASU___SIZE;
+					int drawY2 = drawY1 + MASU___SIZE;
+					// 描画ブレンドモードを設定 (透明度設定)
+					SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128); // 128は透明度の値 (0: 完全透明, 255: 完全不透明)
+					DrawBox(drawX1, drawY1, drawX2, drawY2, 0x0000ff, TRUE); // 緑色の枠線で描画
+					// 描画ブレンドモードを元に戻す
+					SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+				}
+			}
+		}
+	}
+}
+
+
+VOID Player::PlayerWait(){
+
+	DrawString(pUIMessageX, pUIMessageY, "Wait\nkey: s", 0xffffff);
+
+}
+
+
+
+VOID Player::PlayerUiUpdata() {
 
 	//移動
+
 
 	//通常攻撃　デバッグ対象がない為最後で作る
 
@@ -232,9 +297,3 @@ VOID PlayerUiUpdata() {
 
 }
 
-VOID PlayerMove() {
-
-
-
-
-}
