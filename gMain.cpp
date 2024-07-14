@@ -30,7 +30,7 @@ typedef enum //盤面の状態
 
 };
 
-
+BOOL isScenario;
 FPS g_fps;
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
@@ -110,30 +110,39 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
                 break;
             case PLAY_SCENE:
                 PlayCtrl();
-               // ScenarioDraw();
-                
+
+
+                if (isScenario == TRUE) {
+
+                    ScenarioDraw();//シナリオが全部表示が終わたらisScenario　を FALSEにしましょう
+
+                }
+                else{
+
                     FieldLaOutDraw();
-                    if(cursor.isMapCursor==TRUE){
-                    cursor.CursorDraw();
-                    cursor.CursorControl();}
+                    if (cursor.isMapCursor == TRUE) {
+                        cursor.CursorDraw();
+                        cursor.CursorControl();
+                    }
                     cursor.MapInfoShow();
                     cursor.Switching();
                     if (cursor.isMapCursor == FALSE) {
-                       cursor.PlayerUICursorDraw();     //そしてプレイヤUIカーソル描画する
-                       cursor.PlayerControl();          //コントロールもう呼び出す
+                        cursor.PlayerUICursorDraw();     //そしてプレイヤUIカーソル描画する
+                        cursor.PlayerControl();          //コントロールもう呼び出す
                     }
                     player.PlayerPos();
                     //キャラのステータスを表示する
-                    
+
                     {
-                       // debug用
+                        // debug用
                         int mx = 0;
                         int my = 0;
                         GetMousePoint(&mx, &my);
 
-                        DrawFormatString(250, 0, 0x000000, "x=%d,y=%d", mx, my);
+                        DrawFormatString(250, 0, 0xffffff, "x=%d,y=%d", mx, my);
                     }
-               
+                    
+                }
                 break;
             case END_SCENE:
                 EndCtrl();
