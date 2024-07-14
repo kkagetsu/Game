@@ -7,6 +7,7 @@
 #define COLUMN        (20) //行数
 
 int fieldGraph[6]  ;
+int playersGraph[3]  ;
 int GHandleGrass   ;
 int GHandleForest  ;
 int GHandleVillage ;
@@ -18,6 +19,18 @@ extern BOOL isScenario    ;
 
 char buff[256][COLUMN_COUNT] = { 0 }; // シナリオを格納するバッファ
 int lineCount = 0;                    // 読み込んだ行数
+
+unsigned int GetFlashingColor(int time)
+{
+	int phase = (time / 30) % 3; // 90フレームごとに色を変える
+	switch (phase)
+	{
+	case 0: return GetColor(0, 0, 0); // 黒
+	case 1: return GetColor(128, 128, 128); // 灰色
+	case 2: return GetColor(255, 255, 255); // 白
+	default: return GetColor(0, 0, 0);
+	}
+}
 
 //extern BOOL g_isSnOrBF    ;//シナリオなのかバトルフィールド
 
@@ -41,6 +54,11 @@ VOID PlaySceneInit() {
 	fieldGraph[4] = GHandleBridge;
 	fieldGraph[5] = GHandleDrive;
 	
+	playersGraph[0] = LoadGraph("picture/cha_tachie/Kagetsu.png");
+	playersGraph[1] = LoadGraph("picture/cha_tachie/Fy1M5bYssjdkv.png");
+	playersGraph[2] = LoadGraph("picture/cha_tachie/K2B7jixyorRCt.png");
+
+
 	isScenario = true;
 
 	//FILE* fp = NULL; //ファイル操作の準備 ファイルポインタ変数
@@ -185,13 +203,85 @@ VOID ScenarioDraw() {
 	ClearDrawScreen();
 
 	// 文字列を描画
-	DrawString(100, 100, displayStr, 0xffffff); // メッセージを描画
-
-	if (messageDisplayed ==TRUE) {
+	DrawString(80, 50, displayStr, 0xffffff); // メッセージを描画
 
 
 
-		DrawString(100, 150, "終了", 0xffffff); // メッセージが表示された後に終了を描画
+
+	if (messageDisplayed == TRUE) {
+		
+		const int x1 = 100;
+		const int x2 = 300;
+		const int y1 = 430;
+		const int y2 = 590;
+		const int span = 200;
+		int mx = 0, my = 0;
+		const int yUp = 30;
+
+		GetMousePoint(&mx,&my);
+		//0
+		if (mx >= x1 && mx <= x2 && my >= y1 && my <= y2) {
+			DrawExtendGraph(x1, y1 - yUp,
+				x2, y2 - yUp,
+				playersGraph[0], TRUE);
+
+			DrawString(x1, y2 - yUp + 1, "コウタロウ\n(左クリック長押しで決定)", 0xff0000);
+
+			if (GetMouseInput() & MOUSE_INPUT_LEFT) {
+				static int t = 0;
+				const int tMax = 100;
+				// 現在の時間を取得
+				int nowTime = GetNowCount();
+
+				// 背景色を設定
+				unsigned int color = GetFlashingColor(nowTime);
+
+				// 画面全体を塗りつぶす
+				DrawBox(x1, y1 - yUp, x2,y2 - yUp, color, TRUE);
+				DrawExtendGraph(x1, y1 - yUp,
+					x2, y2 - yUp,
+					playersGraph[0], TRUE);
+				t++;
+				if (t > tMax) {
+					isScenario = FALSE;
+					t = 0;
+				}
+
+			}
+		}
+		else {
+			DrawExtendGraph(x1, y1,
+				x2, y2,
+				playersGraph[0], TRUE);
+		}
+		//1
+	    if(mx >= x1 + span + 10&& mx<= x2 + span + 10 && my>= y1 && my<= y2){
+		
+			DrawExtendGraph(x1 + span + 10, y1 - yUp,
+				x2 + span + 10, y2 - yUp,
+				playersGraph[1], TRUE);
+
+			DrawString(x1 + span + 10, y2 - yUp + 1, "ボブ\n(未実装)", 0xff0000);
+		}
+		else {
+			DrawExtendGraph(x1 + span + 10, y1 ,
+				x2 + span + 10, y2 ,
+				playersGraph[1], TRUE);
+		}
+		//2
+		if(mx >= x1 + span * 2 + 20 && mx <= x2 + span * 2 + 20 && my >= y1 && my <= y2){
+			DrawExtendGraph(x1 + span * 2 + 20, y1 - yUp,
+				x2 + span * 2 + 20, y2 - yUp,
+				playersGraph[2], TRUE);
+
+			DrawString(x1 + span * 2 + 20, y2 - yUp + 1, "田中\n(未実装)", 0xff0000);
+		}
+		else {
+			DrawExtendGraph(x1 + span * 2 + 20, y1,
+				x2 + span * 2 + 20, y2,
+				playersGraph[2], TRUE);
+		}
+
 	}
 	// Zキーが押されたら再生速度二倍になる
 	if (CheckHitKey(KEY_INPUT_Z) == 1) {
@@ -212,6 +302,7 @@ VOID ScenarioDraw() {
 		}
 		messageDisplayed = true;
 	}
+
 }
 
 
