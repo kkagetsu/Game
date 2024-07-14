@@ -6,6 +6,14 @@
 #define MASU___SIZE  (40)
 #define TUTORIAL     (1)
 
+enum tagE_EVENT_E {
+	KOUTAROU
+,   BOBU
+,   TANAKA
+
+};
+
+
 
 typedef enum 
 {
@@ -66,4 +74,5 @@ extern VOID FieldLineDraw();
 //フィールドの背景を描く
 extern VOID FieldLaOutDraw();
 
-extern VOID CursorDraw();
+//extern VOID CursorDraw();
+extern VOID EventTutorial();//チュートリアルの会話

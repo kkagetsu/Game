@@ -16,7 +16,7 @@ int GHandleStone   ;
 int GHandleBridge  ;
 int GHandleDrive   ;
 extern BOOL isScenario    ;
-
+extern BOOL isEventTutorial ;
 char buff[256][COLUMN_COUNT] = { 0 }; // シナリオを格納するバッファ
 int lineCount = 0;                    // 読み込んだ行数
 
@@ -25,9 +25,9 @@ unsigned int GetFlashingColor(int time)
 	int phase = (time / 30) % 3; // 90フレームごとに色を変える
 	switch (phase)
 	{
-	case 0: return GetColor(0, 0, 0); // 黒
-	case 1: return GetColor(128, 128, 128); // 灰色
-	case 2: return GetColor(255, 255, 255); // 白
+	case 0 : return GetColor(0, 0, 0); // 黒
+	case 1 : return GetColor(128, 128, 128); // 灰色
+	case 2 : return GetColor(255, 255, 255); // 白
 	default: return GetColor(0, 0, 0);
 	}
 }
@@ -54,13 +54,13 @@ VOID PlaySceneInit() {
 	fieldGraph[4] = GHandleBridge;
 	fieldGraph[5] = GHandleDrive;
 	
-	playersGraph[0] = LoadGraph("picture/cha_tachie/Kagetsu.png");
-	playersGraph[1] = LoadGraph("picture/cha_tachie/Fy1M5bYssjdkv.png");
-	playersGraph[2] = LoadGraph("picture/cha_tachie/K2B7jixyorRCt.png");
+	playersGraph[KOUTAROU] = LoadGraph("picture/cha_tachie/Kagetsu.png");
+	playersGraph[BOBU] = LoadGraph("picture/cha_tachie/Fy1M5bYssjdk.png");
+	playersGraph[TANAKA] = LoadGraph("picture/cha_tachie/K2B7jixyorRCt.png");
 
 
 	isScenario = true;
-
+	isEventTutorial = true;
 	//FILE* fp = NULL; //ファイル操作の準備 ファイルポインタ変数
 	//fp = fopen("scenario.txt", "r"); //textをオープンします
 	//if (fp == NULL) {
@@ -223,7 +223,7 @@ VOID ScenarioDraw() {
 		if (mx >= x1 && mx <= x2 && my >= y1 && my <= y2) {
 			DrawExtendGraph(x1, y1 - yUp,
 				x2, y2 - yUp,
-				playersGraph[0], TRUE);
+				playersGraph[KOUTAROU], TRUE);
 
 			DrawString(x1, y2 - yUp + 1, "コウタロウ\n(左クリック長押しで決定)", 0xff0000);
 
@@ -240,7 +240,7 @@ VOID ScenarioDraw() {
 				DrawBox(x1, y1 - yUp, x2,y2 - yUp, color, TRUE);
 				DrawExtendGraph(x1, y1 - yUp,
 					x2, y2 - yUp,
-					playersGraph[0], TRUE);
+					playersGraph[KOUTAROU], TRUE);
 				t++;
 				if (t > tMax) {
 					isScenario = FALSE;
@@ -252,34 +252,34 @@ VOID ScenarioDraw() {
 		else {
 			DrawExtendGraph(x1, y1,
 				x2, y2,
-				playersGraph[0], TRUE);
+				playersGraph[KOUTAROU], TRUE);
 		}
 		//1
 	    if(mx >= x1 + span + 10&& mx<= x2 + span + 10 && my>= y1 && my<= y2){
 		
 			DrawExtendGraph(x1 + span + 10, y1 - yUp,
 				x2 + span + 10, y2 - yUp,
-				playersGraph[1], TRUE);
+				playersGraph[BOBU], TRUE);
 
 			DrawString(x1 + span + 10, y2 - yUp + 1, "ボブ\n(未実装)", 0xff0000);
 		}
 		else {
 			DrawExtendGraph(x1 + span + 10, y1 ,
 				x2 + span + 10, y2 ,
-				playersGraph[1], TRUE);
+				playersGraph[BOBU], TRUE);
 		}
 		//2
 		if(mx >= x1 + span * 2 + 20 && mx <= x2 + span * 2 + 20 && my >= y1 && my <= y2){
 			DrawExtendGraph(x1 + span * 2 + 20, y1 - yUp,
 				x2 + span * 2 + 20, y2 - yUp,
-				playersGraph[2], TRUE);
+				playersGraph[TANAKA], TRUE);
 
 			DrawString(x1 + span * 2 + 20, y2 - yUp + 1, "田中\n(未実装)", 0xff0000);
 		}
 		else {
 			DrawExtendGraph(x1 + span * 2 + 20, y1,
 				x2 + span * 2 + 20, y2,
-				playersGraph[2], TRUE);
+				playersGraph[TANAKA], TRUE);
 		}
 
 	}
@@ -408,7 +408,50 @@ VOID FieldLaOutDraw() {
 	}
 
 }
+int t1 = 0;
+//チュートリアルイベント
+VOID EventTutorial() {
+	const int xNameStart = 30;
+	const int yNameStart = 500;
+	const int span = 30;
+	const int times = 2;
+	DrawExtendGraph(30, 80,480,480, playersGraph[KOUTAROU],TRUE);
+	DrawExtendGraph(370,80,920,480, playersGraph[BOBU],TRUE);
+	
+		if (t1 < 300 * times)
+		{
+			DrawString(xNameStart, yNameStart, "ボブ", 0xffffff);
+			DrawString(xNameStart + span, yNameStart + span, "『コウ~ちょっといいかい』", 0xF5E496);
+		}
+		
+		else if (t1 > 300* times && t1 < 600 * times) {
+			DrawString(xNameStart, yNameStart, "コウタロウ", 0xffffff);
+			DrawString(xNameStart + span, yNameStart + span, "『ん？なぁに、変な物食っちまったか』", 0xFB544E);
+		}
+		else if(t1 > 600 * times &&t1 <1200 * times){
+			DrawString(xNameStart, yNameStart, "ボブ", 0xffffff);
+			DrawString(xNameStart + span, yNameStart + span, "『違う、違う、「惑星G.L」に行く前にちょっと...\n不安だけど、私の実力じゃ皆の足纏かもしれません』", 0xF5E496);
+		}
+		else if (t1 >=1200 * times && t1 < 1800 * times) {
+			DrawString(xNameStart, yNameStart, "コウタロウ", 0xffffff);
+			DrawString(xNameStart + span, yNameStart + span, "『じゃ、出発まで後一時間あるから、どう俺と稽古しない』", 0xFB544E);
+		}
+		else if (t1 > 1800 * times && t1 < 2400 * times) {
+			DrawString(xNameStart, yNameStart, "ボブ", 0xffffff);
+			DrawString(xNameStart + span, yNameStart + span, "『本当ですか！良かったです、よろしくお願いいたします。\n（ボブが戦闘姿勢に入る）』", 0xF5E496);
+		}
+		else
+		{
+			DrawString(xNameStart, yNameStart, "コウタロウ", 0xffffff);
+			DrawString(xNameStart + span, yNameStart + span, "『良い構えだ、全力で来い！』", 0xFB544E);
+			if (t1 > 3000) {
+				isEventTutorial = FALSE;
+			}
+		}
 
+		t1++;
+	
+}
 //VOID Deleteghandle() {
 //	for (int i = 0; i < 6; i++) {
 //		DeleteGraph(fieldGraph[i]);
