@@ -31,6 +31,7 @@ typedef enum //盤面の状態
 };
 
 BOOL isScenario;
+BOOL isEventTutorial;
 FPS g_fps;
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
@@ -118,8 +119,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
                 }
                 else{
-
                     FieldLaOutDraw();
+                    
+                    if (isEventTutorial == TRUE){
+                       
+                        EventTutorial();
+                    }
+                  
+                    else{
                     if (cursor.isMapCursor == TRUE) {
                         cursor.CursorDraw();
                         cursor.CursorControl();
@@ -132,7 +139,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
                     }
                     player.PlayerPos();
                     //キャラのステータスを表示する
-
+                    }
                     {
                         // debug用
                         int mx = 0;
