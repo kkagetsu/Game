@@ -29,13 +29,14 @@ Cursor::Cursor(Player& player) : player(player) {
 
 	this->isBlink = true;  //gto 初期状態で表示
 	this->lastBlinkTime = GetNowHiPerformanceCount();  //gtp 現在の時刻を取得
-	
+	this->isPlayerMove = FALSE;
 
 	for (int i = 0; i < 256 ; i++) {
 
 		this->key[i] = 0;
 
 	}
+	
 }
 
 //ここも要修正　swtich文
@@ -77,16 +78,24 @@ VOID Cursor::CursorControl( ) {
 			lastMoveTime = currentTime;
 		}
 
-		else if (this->key[KEY_INPUT_SPACE] == 1) //かつカーソルの座標　＝　プレイの座標
+		else if (isPlayerSelected == TRUE && this->key[KEY_INPUT_SPACE] == 1) //カーソルの座標　＝　プレイの座標
 		{
 			//to do　Flag PlayerUiShow
-
+			isMapCursor = FALSE;
+			lastMoveTime = currentTime;
 		}
 		//gtp
 		
 		//カーソルのｘｙ座標　等于　当playerの現座標の場合　isPlayerSelected＝true;
 		this->isPlayerSelected = (this->x1 == player.getPosX() * MASU___SIZE && this->y1 == player.getPosY() * MASU___SIZE);
 	
+
+		//else if (isPlayerSelected == TRUE && this->key[KEY_INPUT_SPACE] == 1)//カーソルをプレイヤ１指定しかつspaceを押した場合
+		//{
+		//
+		//	isMapCursor = FALSE;        //FALSEの場合　マップカーソル描画OFF
+		//}
+
 	}
 }
 VOID Cursor::CursorDraw() {
@@ -185,7 +194,7 @@ VOID Cursor ::PlayerUICursorDraw() {
 	DrawBox(playerX1+1, playerY1+1,playerX2-1,playerY2-1,0x00ff00,FALSE);
 }
 
-
+//playerUIカーソルのコントロール
 VOID Cursor::PlayerControl() {
 
 	GetHitKeyStateAll(this->key);
@@ -229,11 +238,17 @@ VOID Cursor::PlayerControl() {
 		}
 	}
 
+	//プレイヤUIカーソルが moveアイコンの座標と一致した場所
 	if (this->playerX1 == 560 && this->playerY1 == 480) {
-		player.PlayerMove1();
-		if (this->key[KEY_INPUT_M] || this->key[KEY_INPUT_SPACE] == 1) {
+		//moveメッセージを描画
+		player.PlayerMoveMessage();
+		//Mキーを押したら　isPlayerMove　
+		//同時にプレイヤUIカーソルFLASE
+		if (this->key[KEY_INPUT_M]  == 1) {
 
-			player.PlayerMove2();
+			this->isPlayerMove = TRUE;     //TUREになり　TUREなるとキャラの移動範囲マスを描画
+			//this->isPlayerUICursor = FALSE;//同時にisPlayerUICursorをOFFにし、PlayerUIカーソル描画しない変わりmap上のカーソルを
+			                               //描画し（移動範囲はplayermoveのマス中）
 
 		}
 	}
@@ -247,29 +262,31 @@ VOID Cursor::PlayerControl() {
 		player.PlayerWait();
     }
 	
+	if (this->isPlayerMove == TRUE) {
 
+		player.PlayerMove();
+	}
 
 }
 
 //カーソル切り替え
 VOID Cursor::Switching() {
 	
-	if (isPlayerSelected == TRUE && this->key[KEY_INPUT_SPACE] == 1)//カーソルをプレイヤ１指定しかつspaceを押した場合
-	{
+	//if (isPlayerSelected == TRUE && this->key[KEY_INPUT_SPACE] == 1)//カーソルをプレイヤ１指定しかつspaceを押した場合
+	//{
+	//
+	//	isMapCursor = FALSE;        //FALSEの場合　マップカーソル描画OFF
+	//}
 
-		isMapCursor = FALSE;        //FALSEの場合　マップカーソル描画OFF
-	}
-		
+	if (isMapCursor == FALSE)
+	{
 		if (this->key[KEY_INPUT_X] == 1) {//プレイヤUIからエスケープ
 			
-			//レイヤUIカーソル描画OFFし　マップカーソル描画ON
+			//レイヤUIカーソル描画OFFし　マップカーソル描画ON マップカーソルに戻す
 			isMapCursor = TRUE;
-			this->playerX1 = 560;
-			this->playerY1 = GRID_HEIGHT * MASU___SIZE;
-			this->playerX2 = 560 + MASU___SIZE;
-			this->playerY2 = GRID_HEIGHT * MASU___SIZE + MASU___SIZE;
+		
 		}
 
-
+	}
 }
 	

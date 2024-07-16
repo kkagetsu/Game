@@ -112,13 +112,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             case PLAY_SCENE:
                 PlayCtrl();
 
-
+                //シナリオのがtrueの場合　
                 if (isScenario == TRUE) {
 
-                    ScenarioDraw();//シナリオが全部表示が終わたらisScenario　を FALSEにしましょう
-
+                    ScenarioDraw();//シナリオが表示する,終わたらisScenario　を FALSEにします
                 }
+                //シナリオのがfalseの場合
+                
                 else{
+
                     FieldLaOutDraw();
                     
                     if (isEventTutorial == TRUE){

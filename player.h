@@ -45,6 +45,9 @@ private:
 	int agi;                //素早さ
 	int luc;			    //運
 	int move;               //移動力
+	int action;             //行動　攻撃　２　移動１　item　２　スキル　２　action < 0　行動終了
+
+
 	int grHandle[COUNT__E]; //player１のたち絵
 	int grHandleUI[PLAYER_UI_COUNT];//player１のUI
 	int posx, posy;         //座標
@@ -63,14 +66,14 @@ public:
 	VOID PlayerPos();
 
 	VOID PlayerUiShow();
-	VOID PlayerMove1();
-	VOID PlayerMove2();
+	VOID PlayerMoveMessage();
+	VOID PlayerMove();
 	VOID PlayerAttack();
 	VOID PlayerItem();
 	VOID PlayerWait();
 
 	VOID PlayerUiUpdata();
-
+	unsigned int GetFlashingColor(int time);
 
 	// gtp ゲッタ-座標
 	inline int getPosX() const { return posx; } //inline化
