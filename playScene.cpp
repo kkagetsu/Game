@@ -313,7 +313,7 @@ VOID ScenarioDraw() {
 		}
 		messageDisplayed = true;
 	}
-
+	DrawString(200,0,"Skip =[Sキー],二倍速 =[Zキー]",0xffffff);
 }
 
 VOID FieldLineDraw() {
@@ -423,7 +423,11 @@ VOID EventTutorial() {
 	const int yNameStart = 500;
 	const int span = 30;
 	const int times = 2;
-	DrawExtendGraph(30, 80,480,480, playersGraph[KOUTAROU],TRUE);
+	if (t1 > 300 * times)
+	{
+		DrawExtendGraph(30, 80, 480, 480, playersGraph[KOUTAROU], TRUE);
+	}
+	//DrawExtendGraph(30, 80,480,480, playersGraph[KOUTAROU],TRUE);
 	DrawExtendGraph(370,80,920,480, playersGraph[BOBU],TRUE);
 	
 		if (t1 < 300 * times)
@@ -446,7 +450,7 @@ VOID EventTutorial() {
 		}
 		else if (t1 > 1800 * times && t1 < 2400 * times) {
 			DrawString(xNameStart, yNameStart, "ボブ", 0xffffff);
-			DrawString(xNameStart + span, yNameStart + span, "『本当ですか！良かったです、よろしくお願いいたします。\n（ボブが戦闘姿勢に入る）』", 0xF5E496);
+			DrawString(xNameStart + span, yNameStart + span, "『本当ですか！良かったです、よろしくお願いいたします。\n（ボブが戦闘体勢に入る）』", 0xF5E496);
 		}
 		else
 		{
@@ -458,9 +462,12 @@ VOID EventTutorial() {
 		}
 
 		t1++;
-		if (CheckHitKey(KEY_INPUT_Z) == 1) {
+		if (CheckHitKey(KEY_INPUT_S) == 1) {
 			t1 = 3000*times;
 		}
+
+		DrawString(700, 580, "Skip = [Sキー]", 0xffffff);
+    
 }
 //VOID Deleteghandle() {
 //	for (int i = 0; i < 6; i++) {

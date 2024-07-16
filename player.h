@@ -21,10 +21,26 @@ enum tagE_PLAYER_UI_T
 ,   SPSKILL_E
 ,   LEARNSKILL_E
 ,   SKILL_1_E
-,   PLAYER_UI_COUNT
+,   PLAYER_UI_E_COUNT
 
 };
+enum E_PLAYER_UI_T {
+	PLAYER_UI_MOVE
+	, PLAYER_UI_ATTACK
+	, PLAYER_UI_ITEM
+	, PLAYER_UI_WAIT
+	, PLAYER_UI_SPSKILL
+	, PLAYER_UI_SKILLPOINT
+	, PLAYER_UI_SKILL1
+	, PLAYER_UI_SKILL2
+	, PLAYER_UI_SKILL3
+	, PLAYER_UI_SKILL4
 
+	, PLAYER_UI_COUNT
+	, PLAYER_UI_INVALID = -1
+	, PLAYER_UI_BEGIN
+
+};
 
 class Player {
 	//メンバー変数なので　前にm_を付けましょう 
@@ -49,7 +65,7 @@ private:
 
 
 	int grHandle[COUNT__E]; //player１のたち絵
-	int grHandleUI[PLAYER_UI_COUNT];//player１のUI
+	int grHandleUI[PLAYER_UI_E_COUNT];//player１のUI
 	int posx, posy;         //座標
 	const int pUIMessageX = 730;   //プレイヤのUI情報の文字表示座標
 	const int pUIMessageY = 500;	//プレイヤのUI情報の文字表示座標
@@ -68,9 +84,9 @@ public:
 	VOID PlayerUiShow();
 	VOID PlayerMoveMessage();
 	VOID PlayerMove();
-	VOID PlayerAttack();
-	VOID PlayerItem();
-	VOID PlayerWait();
+	VOID PlayerAttackMessage();
+	VOID PlayerItemMessage();
+	VOID PlayerWaitMessage();
 
 	VOID PlayerUiUpdata();
 	unsigned int GetFlashingColor(int time);
@@ -78,5 +94,9 @@ public:
 	// gtp ゲッタ-座標
 	inline int getPosX() const { return posx; } //inline化
 	inline int getPosY() const { return posy; }	//inline化
+	inline int getMove() const { return move; }	//inline化
+
+	VOID setPosX(int x) { this->posx = x; }
+	void setPosY(int y) { this->posy = y; }
 
 }; 

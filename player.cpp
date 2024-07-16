@@ -25,7 +25,7 @@ Player::Player() {
 	this->move = 3;   //移動量
 	this->posx = 0;
 	this->posy = 0;
-	
+	this->action = 0;
 
 	memset(grHandle, NULL, sizeof(grHandle)); //画像のloadと画像を格納用の変数を分けてそれぞれ初期化する ここではゼロクリア
 	memset(grHandleUI, NULL, sizeof(grHandleUI));
@@ -182,7 +182,7 @@ VOID Player::PlayerUiShow() {
 	//{
 	//	OutputDebugString("moveG エラー!!\n");
 	//}
-	for (int i = 0; i <= PLAYER_UI_COUNT-4; i++) {
+	for (int i = 0; i <= PLAYER_UI_E_COUNT-4; i++) {
 
 		// 0移動アイコン 1攻撃　2アイテム　3待機
 		DrawExtendGraph(560 + i*MASU___SIZE + 2, GRID_HEIGHT * MASU___SIZE + 2,
@@ -215,7 +215,7 @@ VOID Player::PlayerMoveMessage(){
 
 }
 
-VOID Player::PlayerAttack(){
+VOID Player::PlayerAttackMessage(){
 
 	DrawString(pUIMessageX, pUIMessageY, "Attack\nkey: a", 0xffffff);
 
@@ -225,7 +225,7 @@ VOID Player::PlayerAttack(){
 	}
 
 }
-VOID Player::PlayerItem(){
+VOID Player::PlayerItemMessage(){
 
 	DrawString(pUIMessageX, pUIMessageY, "Item\nkey: b", 0xffffff);
 
@@ -239,26 +239,32 @@ VOID Player::PlayerMove() {
 				int x = posx + dx;
 				int y = posy + dy;
 
-			// マップ範囲内かどうかをチェック
+				// マップ範囲内かどうかをチェック
 				if (x >= 0 && x < GRID__WIDTH && y >= 0 && y < GRID_HEIGHT) {
-					// マスの中心を計算
-					int drawX1 = x * MASU___SIZE;
-					int drawY1 = y * MASU___SIZE;
-					int drawX2 = drawX1 + MASU___SIZE;
-					int drawY2 = drawY1 + MASU___SIZE;
-					// 描画ブレンドモードを設定 (透明度設定)
-					SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128); // 128は透明度の値 (0: 完全透明, 255: 完全不透明)
-					DrawBox(drawX1, drawY1, drawX2, drawY2, 0x0000ff, TRUE); // 蒼色の枠線で描画
-					// 描画ブレンドモードを元に戻す
-					SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+					// 岩、川、壁のマスをスキップ
+					E_LAYOUT_T layout = g_layout[y][x];
+
+					if (layout != LAYOUT_STONE && layout != LAYOUT_DRIVE && layout != LAYOUT_WALL) {
+
+						// マスの中心を計算
+						int drawX1 = x * MASU___SIZE;
+						int drawY1 = y * MASU___SIZE;
+						int drawX2 = drawX1 + MASU___SIZE;
+						int drawY2 = drawY1 + MASU___SIZE;
+						// 描画ブレンドモードを設定 (透明度設定)
+						SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128); // 128は透明度の値 (0: 完全透明, 255: 完全不透明)
+						DrawBox(drawX1, drawY1, drawX2, drawY2, 0x0000ff, TRUE); // 蒼色の枠線で描画
+						// 描画ブレンドモードを元に戻す
+						SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+					}
 				}
 			}
 		}
 	}
 }
 
-
-VOID Player::PlayerWait(){
+VOID Player::PlayerWaitMessage(){
 
 	DrawString(pUIMessageX, pUIMessageY, "Wait\nkey: s", 0xffffff);
 
