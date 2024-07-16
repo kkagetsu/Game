@@ -1,292 +1,265 @@
-#include "cursorCntrol.h"
+ï»¿#include "cursorCntrol.h"
 #include "playScene.h"
 
-//ƒRƒ“ƒXƒgƒ‰ƒNƒ^@ƒJ[ƒ\ƒ‹‚Ìî•ñ‚ğ‰Šú‰»
+// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ ã‚«ãƒ¼ã‚½ãƒ«ã®æƒ…å ±ã‚’åˆæœŸåŒ–
 Cursor::Cursor(Player& player) : player(player) {
+    this->x1 = (GRID__WIDTH - 1) * MASU___SIZE;
+    this->x2 = GRID__WIDTH * MASU___SIZE;
+    this->y1 = (GRID_HEIGHT - 1) * MASU___SIZE;
+    this->y2 = GRID_HEIGHT * MASU___SIZE;
 
-	this->x1 = (GRID__WIDTH - 1) * MASU___SIZE;
+    this->isMapCursor = TRUE; // TRUEã®å ´åˆ ãƒãƒƒãƒ—ã‚«ãƒ¼ã‚½ãƒ«æç”»ON
 
-	this->x2 = GRID__WIDTH * MASU___SIZE;
+    this->playerX1 = 560;
+    this->playerY1 = GRID_HEIGHT * MASU___SIZE;
+    this->playerX2 = 560 + MASU___SIZE;
+    this->playerY2 = GRID_HEIGHT * MASU___SIZE + MASU___SIZE;
 
-	this->y1 = (GRID_HEIGHT - 1) * MASU___SIZE;
-	
-	this->y2 = GRID_HEIGHT * MASU___SIZE;
+    this->isPlayerUICursor = FALSE; // åˆæœŸçŠ¶æ…‹ã§ãƒ—ãƒ¬ã‚¤ãƒ¤UIã‚«ãƒ¼ã‚½ãƒ«ã‚’éè¡¨ç¤º
 
-	this->isMapCursor = TRUE; //TRUE‚Ìê‡@ƒ}ƒbƒvƒJ[ƒ\ƒ‹•`‰æON
-	
-
-
-	this->playerX1 = 560;
-	this->playerY1 = GRID_HEIGHT * MASU___SIZE;
-	this->playerX2 = 560 + MASU___SIZE;
-	this->playerY2 = GRID_HEIGHT * MASU___SIZE + MASU___SIZE;
-
-	this->isPlayerUICursor = FALSE;//‰Šú•s•\¦ó‘Ô
-
-	this->color = GetColor(255, 255, 0);
-	
-	this->isPlayerSelected = false; //by gtp  ‰Šúó‘Ô‚Å‚ÍƒvƒŒƒCƒ„[‚Í‘I‘ğ‚³‚ê‚Ä‚¢‚È‚¢
-
-	this->isBlink = true;  //gto ‰Šúó‘Ô‚Å•\¦
-	this->lastBlinkTime = GetNowHiPerformanceCount();  //gtp Œ»İ‚Ì‚ğæ“¾
-	this->isPlayerMove = FALSE;
-
-	for (int i = 0; i < 256 ; i++) {
-
-		this->key[i] = 0;
-
-	}
-	
+    this->color = GetColor(255, 255, 0);
+    this->lastMoveTime = 0;
+    this->isPlayerSelected = false; // åˆæœŸçŠ¶æ…‹ã§ã¯ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¯é¸æŠã•ã‚Œã¦ã„ãªã„
+    this->isBlink = true; // åˆæœŸçŠ¶æ…‹ã§ç‚¹æ»…è¡¨ç¤º
+    this->lastBlinkTime = GetNowHiPerformanceCount(); // ç¾åœ¨ã®æ™‚åˆ»ã‚’å–å¾—
+    this->isPlayerMoveShow = FALSE;
+    this->playerUI_Is = PLAYER_UI_INVALID; // playerUIã®çŠ¶æ…‹ã‚’åˆæœŸåŒ–ã—ã¾ã™
+    for (int i = 0; i < 256; i++) {
+        this->key[i] = 0;
+    }
 }
 
-//‚±‚±‚à—vC³@swtich•¶
-VOID Cursor::CursorControl( ) {
-	GetHitKeyStateAll(this->key);
+// ã‚«ãƒ¼ã‚½ãƒ«åˆ¶å¾¡
+VOID Cursor::CursorControl() {
+    GetHitKeyStateAll(this->key); // ã™ã¹ã¦ã®ã‚­ãƒ¼ã®çŠ¶æ…‹ã‚’å–å¾—
+    LONGLONG currentTime = GetNowHiPerformanceCount(); // ç¾åœ¨ã®æ™‚åˆ»ã‚’å–å¾—
 
-	LONGLONG currentTime = GetNowHiPerformanceCount();  // gtp Œ»İ‚Ì‚ğæ“¾
+    // ç§»å‹•ã®ã‚¿ã‚¤ãƒŸãƒ³ã‚°ã‚’åˆ¶å¾¡ã™ã‚‹ãŸã‚ã®é–“éš”ï¼ˆãƒã‚¤ã‚¯ãƒ­ç§’ï¼‰
+    const LONGLONG moveInterval = 100000; // 0.1ç§’
 
-	// gtp ˆÚ“®‚Ìƒ^ƒCƒ~ƒ“ƒO‚ğ§Œä‚·‚é‚½‚ß‚ÌŠÔŠuiƒ}ƒCƒNƒ•bj
-	const LONGLONG moveInterval = 100000;  // gtp 0.1•b
+    if (currentTime - lastMoveTime > moveInterval) {
+        int newX1 = this->x1;
+        int newX2 = this->x2;
+        int newY1 = this->y1;
+        int newY2 = this->y2;
 
-	if (currentTime - lastMoveTime > moveInterval) {
-		if (this->key[KEY_INPUT_LEFT] == 1
-			&& this->x1 >= MASU___SIZE) {
-			this->x1 = this->x1 - MASU___SIZE;
-			this->x2 = this->x2 - MASU___SIZE;
+        if (this->key[KEY_INPUT_LEFT] == 1 && this->x1 >= MASU___SIZE) {
+            newX1 -= MASU___SIZE;
+            newX2 -= MASU___SIZE;
+        }
+        else if (this->key[KEY_INPUT_RIGHT] == 1 && this->x1 <= (GRID__WIDTH - 2) * MASU___SIZE) {
+            newX1 += MASU___SIZE;
+            newX2 += MASU___SIZE;
+        }
+        else if (this->key[KEY_INPUT_UP] == 1 && this->y1 >= MASU___SIZE) {
+            newY1 -= MASU___SIZE;
+            newY2 -= MASU___SIZE;
+        }
+        else if (this->key[KEY_INPUT_DOWN] == 1 && this->y1 <= (GRID_HEIGHT - 2) * MASU___SIZE) {
+            newY1 += MASU___SIZE;
+            newY2 += MASU___SIZE;
+        }
 
-			lastMoveTime = currentTime;
-		}
-		else if (this->key[KEY_INPUT_RIGHT] == 1
-			&& this->x1 <= (GRID__WIDTH - 2) * MASU___SIZE) {
-			this->x1 = this->x1 + MASU___SIZE;
-			this->x2 = this->x2 + MASU___SIZE;
+        if (this->isPlayerMoveShow) {
+            // ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã®ç§»å‹•ç¯„å›²å†…ã«ã„ã‚‹ã‹ã‚’ç¢ºèª
+            int playerPosX = player.getPosX() * MASU___SIZE;
+            int playerPosY = player.getPosY() * MASU___SIZE;
+            bool isWithinMoveRange = (abs(newX1 - playerPosX) / MASU___SIZE + abs(newY1 - playerPosY) / MASU___SIZE <= player.getMove());
 
-			lastMoveTime = currentTime;
-		}
-		else if (this->key[KEY_INPUT_UP] == 1
-			&& this->y1 >= MASU___SIZE) {
-			this->y1 = this->y1 - MASU___SIZE;
-			this->y2 = this->y2 - MASU___SIZE;
+            // æ–°ã—ã„åº§æ¨™ã®åœ°å½¢æƒ…å ±ã‚’å–å¾—
+            int newLayoutX = newX1 / MASU___SIZE;
+            int newLayoutY = newY1 / MASU___SIZE;
+            E_LAYOUT_T layout = g_layout[newLayoutY][newLayoutX];
 
-			lastMoveTime = currentTime;
-		}
-		else if (this->key[KEY_INPUT_DOWN] == 1
-			&& this->y1 <= (GRID_HEIGHT - 2) * MASU___SIZE) {
-			this->y1 = this->y1 + MASU___SIZE;
-			this->y2 = this->y2 + MASU___SIZE;
+            // å²©ã€å·ã€å£ã®ãƒã‚¹ã§ã¯ãªã„ã“ã¨ã‚’ç¢ºèª
+            if (isWithinMoveRange && (layout != LAYOUT_STONE && layout != LAYOUT_DRIVE && layout != LAYOUT_WALL)) {
+                this->x1 = newX1;
+                this->x2 = newX2;
+                this->y1 = newY1;
+                this->y2 = newY2;
+                lastMoveTime = currentTime;
+            }
+        }
+        else {
+            // é€šå¸¸çŠ¶æ…‹ã§ã¯ã‚«ãƒ¼ã‚½ãƒ«ã‚’è‡ªç”±ã«ç§»å‹•å¯èƒ½
+            this->x1 = newX1;
+            this->x2 = newX2;
+            this->y1 = newY1;
+            this->y2 = newY2;
+            lastMoveTime = currentTime;
+        }
 
-			lastMoveTime = currentTime;
-		}
-
-		else if (isPlayerSelected == TRUE && this->key[KEY_INPUT_SPACE] == 1) //ƒJ[ƒ\ƒ‹‚ÌÀ•W@@ƒvƒŒƒC‚ÌÀ•W
-		{
-			//to do@Flag PlayerUiShow
-			isMapCursor = FALSE;
-			lastMoveTime = currentTime;
-		}
-		//gtp
-		
-		//ƒJ[ƒ\ƒ‹‚Ì‚˜‚™À•W@“™˜°@“–player‚ÌŒ»À•W‚Ìê‡@isPlayerSelectedtrue;
-		this->isPlayerSelected = (this->x1 == player.getPosX() * MASU___SIZE && this->y1 == player.getPosY() * MASU___SIZE);
-	
-
-		//else if (isPlayerSelected == TRUE && this->key[KEY_INPUT_SPACE] == 1)//ƒJ[ƒ\ƒ‹‚ğƒvƒŒƒCƒ„‚Pw’è‚µ‚©‚Âspace‚ğ‰Ÿ‚µ‚½ê‡
-		//{
-		//
-		//	isMapCursor = FALSE;        //FALSE‚Ìê‡@ƒ}ƒbƒvƒJ[ƒ\ƒ‹•`‰æOFF
-		//}
-
-	}
+        if (this->isPlayerSelected == TRUE && this->key[KEY_INPUT_SPACE] == 1) { // ã‚«ãƒ¼ã‚½ãƒ«ã®åº§æ¨™ãŒãƒ—ãƒ¬ã‚¤ãƒ¤ã®åº§æ¨™ã¨ä¸€è‡´ã™ã‚‹å ´åˆ
+            isMapCursor = FALSE;
+            lastMoveTime = currentTime;
+        }
+        this->isPlayerSelected = (this->x1 == player.getPosX() * MASU___SIZE && this->y1 == player.getPosY() * MASU___SIZE);
+    }
+    if (this->isPlayerMoveShow == TRUE) {
+        player.PlayerMove(); // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ç§»å‹•ç¯„å›²ã‚’è¡¨ç¤ºã™ã‚‹
+    }
 }
+
+// ã‚«ãƒ¼ã‚½ãƒ«æç”»
 VOID Cursor::CursorDraw() {
+    LONGLONG currentTime = GetNowHiPerformanceCount();
 
-	LONGLONG currentTime = GetNowHiPerformanceCount();
+    // ç§»å‹•çŠ¶æ…‹æ™‚ã«ç‚¹æ»…ã—ãªã„ã‚ˆã†ã«ã™ã‚‹
+    if (!this->isPlayerMoveShow) {
+        // ç‚¹æ»…ã®é–“éš”ãŒçµŒéã—ãŸã‚‰è¡¨ç¤ºãƒ•ãƒ©ã‚°ã‚’åˆ‡ã‚Šæ›¿ãˆã‚‹
+        if (currentTime - lastBlinkTime > blink) {
+            isBlink = !isBlink;
+            lastBlinkTime = currentTime;
+        }
+    }
+    else {
+        isBlink = true; // ç§»å‹•çŠ¶æ…‹æ™‚ã¯å¸¸ã«è¡¨ç¤º
+    }
 
-	// “_–Å‚ÌŠÔŠu‚ªŒo‰ß‚µ‚½‚ç•\¦ƒtƒ‰ƒO‚ğØ‚è‘Ö‚¦‚é
-	if (currentTime - lastBlinkTime > blink) {
-		isBlink = !isBlink;
-		lastBlinkTime = currentTime;
-	}
+    if (isBlink) {
+        DrawBox(this->x1, this->y1, this->x2, this->y2, color, TRUE);
+    }
+}
 
-
-	if (isBlink) {
-		DrawBox(this->x1, this->y1, this->x2, this->y2, color, TRUE);
-	}
-
-	}
-
-
+// ãƒãƒƒãƒ—æƒ…å ±è¡¨ç¤º
 VOID Cursor::MapInfoShow() {
+    // ã‚«ãƒ¼ã‚½ãƒ«ãŒã‚ã‚‹ãƒãƒƒãƒ—ã®åº§æ¨™ã‚’è¨ˆç®—
+    int mapX = this->x1 / MASU___SIZE;
+    int mapY = this->y1 / MASU___SIZE;
 
-	// ƒJ[ƒ\ƒ‹‚ª‚ ‚éƒ}ƒbƒv‚ÌÀ•W‚ğŒvZ
+    if (mapX >= 0 && mapX < GRID__WIDTH && mapY >= 0 && mapY < GRID_HEIGHT) {
+        // ãƒãƒƒãƒ—æƒ…å ±ã‚’å–å¾—
+        E_LAYOUT_T mapInfo = g_layout[mapY][mapX];
+        switch (mapInfo) {
+        case LAYOUT_GRASS:
+            DrawString(200, 0, "è‰", 0x00ff00);
+            break;
+        case LAYOUT_VILLAGE:
+            DrawString(200, 0, "æ‘", 0xC8BFE7);
+            break;
+        case LAYOUT_STONE:
+            DrawString(200, 0, "çŸ³", 0xCCDDE7);
+            break;
+        case LAYOUT_DRIVE:
+            DrawString(200, 0, "å·", 0x0000ff);
+            break;
+        case LAYOUT_FOREST:
+            DrawString(200, 0, "æ£®", 0x8E403A);
+            break;
+        case LAYOUT_WALL:
+            DrawString(200, 0, "å£", 0xE7E6CD);
+            break;
+        case LAYOUT_BRIDGE:
+            DrawString(200, 0, "æ©‹", 0xE7C385);
+            break;
+        default:
+            DrawString(200, 0, "ã‚¨ãƒ©ãƒ¼", 0xFF0000);
+            break;
+        }
+    }
 
-	int mapX = this->x1 / MASU___SIZE;
-	int mapY = this->y1 / MASU___SIZE;
-
-	if (mapX >= 0 && mapX < GRID__WIDTH && mapY >= 0 && mapY < GRID_HEIGHT) {
-
-		// ƒ}ƒbƒvî•ñ‚ğæ“¾
-		E_LAYOUT_T mapInfo = g_layout[mapY][mapX];
-
-		switch (mapInfo) {
-		case LAYOUT_GRASS:
-
-			DrawString(200, 0, "‘", 0x00ff00);
-
-			break;
-
-		case LAYOUT_VILLAGE:
-
-			DrawString(200, 0, "‘º", 0xC8BFE7);
-
-			break;
-
-		case LAYOUT_STONE:
-
-			DrawString(200, 0, "Î", 0xCCDDE7);
-
-			break;
-
-
-		case LAYOUT_DRIVE:
-
-			DrawString(200, 0, "ì", 0x0000ff);
-
-			break;
-
-		case LAYOUT_FOREST:
-
-			DrawString(200, 0, "X", 0x8E403A);
-
-			break;
-
-		case LAYOUT_WALL:
-
-			DrawString(200, 0, "•Ç", 0xE7E6CD);
-
-			break;
-
-		case LAYOUT_BRIDGE:
-
-			DrawString(200, 0, "‹´", 0xE7C385);
-
-			break;
-
-
-
-		default:
-
-			DrawString(200, 0, "ƒGƒ‰[", 0xFF0000);
-
-			break;
-		}
-	}
-
-	//by gtp ƒvƒŒƒCƒ„[‚ª‘I‘ğ‚³‚ê‚Ä‚¢‚éê‡‚ÉƒXƒe[ƒ^ƒX‚ğ•\¦
-	if (this->isPlayerSelected) {
-		player.StatusShow();
-	}
+    // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒé¸æŠã•ã‚Œã¦ã„ã‚‹å ´åˆã«ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚’è¡¨ç¤º
+    if (this->isPlayerSelected) {
+        player.StatusShow();
+    }
 }
 
-
-VOID Cursor ::PlayerUICursorDraw() {
-	
-	DrawBox(playerX1+1, playerY1+1,playerX2-1,playerY2-1,0x00ff00,FALSE);
+// ãƒ—ãƒ¬ã‚¤ãƒ¤UIã‚«ãƒ¼ã‚½ãƒ«æç”»
+VOID Cursor::PlayerUICursorDraw() {
+    DrawBox(playerX1 + 1, playerY1 + 1, playerX2 - 1, playerY2 - 1, 0x00ff00, FALSE);
 }
 
-//playerUIƒJ[ƒ\ƒ‹‚ÌƒRƒ“ƒgƒ[ƒ‹
-VOID Cursor::PlayerControl() {
+// ãƒ—ãƒ¬ã‚¤ãƒ¤UIã‚«ãƒ¼ã‚½ãƒ«ã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«
+VOID Cursor::PlayerUIControl() {
+    GetHitKeyStateAll(this->key); // ã™ã¹ã¦ã®ã‚­ãƒ¼ã®çŠ¶æ…‹ã‚’å–å¾—
+    LONGLONG currentTime = GetNowHiPerformanceCount(); // ç¾åœ¨ã®æ™‚åˆ»ã‚’å–å¾—
 
-	GetHitKeyStateAll(this->key);
+    // ç§»å‹•ã®ã‚¿ã‚¤ãƒŸãƒ³ã‚°ã‚’åˆ¶å¾¡ã™ã‚‹ãŸã‚ã®é–“éš”ï¼ˆãƒã‚¤ã‚¯ãƒ­ç§’ï¼‰
+    const LONGLONG moveInterval = 100000; // 0.1ç§’
 
-	LONGLONG currentTime = GetNowHiPerformanceCount();  // gtp Œ»İ‚Ì‚ğæ“¾
+    // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼UIã‚«ãƒ¼ã‚½ãƒ«ã®ç§»å‹•ç¯„å›²
+    const int playerMinX = 560;
+    const int playerMaxX = 680;
+    const int playerMinY = 480;
+    const int playerMaxY = 560;
 
-	// gtp ˆÚ“®‚Ìƒ^ƒCƒ~ƒ“ƒO‚ğ§Œä‚·‚é‚½‚ß‚ÌŠÔŠuiƒ}ƒCƒNƒ•bj
-	const LONGLONG moveInterval = 100000;  // gtp 0.1•b
-
-	// ƒvƒŒƒCƒ„[UIƒJ[ƒ\ƒ‹‚ÌˆÚ“®‹——£
-	const int playerMinX = 560;
-	const int playerMaxX = 680;
-	const int playerMinY = 480;
-	const int playerMaxY = 560;
-
-	if (currentTime - lastMoveTime > moveInterval) {
-		if (this->key[KEY_INPUT_LEFT] == 1
-			&& this->playerX1 > playerMinX ) {
-			this->playerX1 = this->playerX1 - MASU___SIZE;
-			this->playerX2 = this->playerX2 - MASU___SIZE;
-			lastMoveTime = currentTime;
-		}
-
-		else if (this->key[KEY_INPUT_RIGHT] == 1
-			&& this->playerX1 < playerMaxX ) {
-			this->playerX1 = this->playerX1 + MASU___SIZE;
-			this->playerX2 = this->playerX2 + MASU___SIZE;
-			lastMoveTime = currentTime;
-		}
-		else if (this->key[KEY_INPUT_UP] == 1
-			&& this->playerY1 > playerMinY ) {
-			this->playerY1 = this->playerY1 - MASU___SIZE;
-			this->playerY2 = this->playerY2 - MASU___SIZE;
-			lastMoveTime = currentTime;
-		}
-		else if (this->key[KEY_INPUT_DOWN] == 1
-			&& this->playerY1 < playerMaxY ) {
-			this->playerY1 = this->playerY1 + MASU___SIZE;
-			this->playerY2 = this->playerY2 + MASU___SIZE;
-			lastMoveTime = currentTime;
-		}
-	}
-
-	//ƒvƒŒƒCƒ„UIƒJ[ƒ\ƒ‹‚ª moveƒAƒCƒRƒ“‚ÌÀ•W‚Æˆê’v‚µ‚½êŠ
-	if (this->playerX1 == 560 && this->playerY1 == 480) {
-		//moveƒƒbƒZ[ƒW‚ğ•`‰æ
-		player.PlayerMoveMessage();
-		//MƒL[‚ğ‰Ÿ‚µ‚½‚ç@isPlayerMove@
-		//“¯‚ÉƒvƒŒƒCƒ„UIƒJ[ƒ\ƒ‹FLASE
-		if (this->key[KEY_INPUT_M]  == 1) {
-
-			this->isPlayerMove = TRUE;     //TURE‚É‚È‚è@TURE‚È‚é‚ÆƒLƒƒƒ‰‚ÌˆÚ“®”ÍˆÍƒ}ƒX‚ğ•`‰æ
-			//this->isPlayerUICursor = FALSE;//“¯‚ÉisPlayerUICursor‚ğOFF‚É‚µAPlayerUIƒJ[ƒ\ƒ‹•`‰æ‚µ‚È‚¢•Ï‚í‚èmapã‚ÌƒJ[ƒ\ƒ‹‚ğ
-			                               //•`‰æ‚µiˆÚ“®”ÍˆÍ‚Íplayermove‚Ìƒ}ƒX’†j
-
-		}
-	}
-	else if(this->playerX1 == 560 + MASU___SIZE   && this->playerY1 == 480){
-		player.PlayerAttack();
+    if (currentTime - lastMoveTime > moveInterval) {
+        if (this->key[KEY_INPUT_LEFT] == 1 && this->playerX1 > playerMinX) {
+            this->playerX1 = this->playerX1 - MASU___SIZE;
+            this->playerX2 = this->playerX2 - MASU___SIZE;
+            lastMoveTime = currentTime;
+        }
+        else if (this->key[KEY_INPUT_RIGHT] == 1 && this->playerX1 < playerMaxX) {
+            this->playerX1 = this->playerX1 + MASU___SIZE;
+            this->playerX2 = this->playerX2 + MASU___SIZE;
+            lastMoveTime = currentTime;
+        }
+        else if (this->key[KEY_INPUT_UP] == 1 && this->playerY1 > playerMinY) {
+            this->playerY1 = this->playerY1 - MASU___SIZE;
+            this->playerY2 = this->playerY2 - MASU___SIZE;
+            lastMoveTime = currentTime;
+        }
+        else if (this->key[KEY_INPUT_DOWN] == 1 && this->playerY1 < playerMaxY) {
+            this->playerY1 = this->playerY1 + MASU___SIZE;
+            this->playerY2 = this->playerY2 + MASU___SIZE;
+            lastMoveTime = currentTime;
+        }
     }
-	else if(this->playerX1 == 560 + 2*MASU___SIZE && this->playerY1 == 480){
-		player.PlayerItem();
-    }
-	else if(this->playerX1 == 560 + 3*MASU___SIZE && this->playerY1 == 480){
-		player.PlayerWait();
-    }
-	
-	if (this->isPlayerMove == TRUE) {
 
-		player.PlayerMove();
-	}
+    // ãƒ—ãƒ¬ã‚¤ãƒ¤UIã‚«ãƒ¼ã‚½ãƒ«ãŒ moveã‚¢ã‚¤ã‚³ãƒ³ã®åº§æ¨™ã¨ä¸€è‡´ã—ãŸå ´æ‰€
+    if (this->playerX1 == 560 && this->playerY1 == 480) {
+        // moveãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æç”»(UIã«è¡¨ç¤º)
+        player.PlayerMoveMessage();
+        playerUI_Is = PLAYER_UI_MOVE;
+    }
+    else if (this->playerX1 == 560 + MASU___SIZE && this->playerY1 == 480) {
+        player.PlayerAttackMessage();
+        playerUI_Is = PLAYER_UI_ATTACK;
+    }
+    else if (this->playerX1 == 560 + 2 * MASU___SIZE && this->playerY1 == 480) {
+        player.PlayerItemMessage();
+        playerUI_Is = PLAYER_UI_ITEM;
+    }
+    else if (this->playerX1 == 560 + 3 * MASU___SIZE && this->playerY1 == 480) {
+        player.PlayerWaitMessage();
+        playerUI_Is = PLAYER_UI_WAIT;
+    }
 
+    switch (playerUI_Is) {
+    case PLAYER_UI_MOVE:
+        // Mã‚­ãƒ¼ã‚’æŠ¼ã—ãŸã‚‰ isPlayerMove
+        if (this->key[KEY_INPUT_M] == 1) {
+            this->isPlayerMoveShow = TRUE; // TRUEã«ãªã‚Š TRUEãªã‚‹ã¨ã‚­ãƒ£ãƒ©ã®ç§»å‹•ç¯„å›²ãƒã‚¹ã‚’æç”»
+            this->isPlayerUICursor = FALSE; // åŒæ™‚ã«playerUIã‚«ãƒ¼ã‚½ãƒ«ã®åˆ¶å¾¡ã‚’offã™ã‚‹
+            this->isMapCursor = TRUE; // æç”»ã—ï¼ˆç§»å‹•ç¯„å›²ã¯playermoveã®ãƒã‚¹ä¸­ï¼‰
+        }
+        break;
+    case PLAYER_UI_ATTACK:
+        if (this->key[KEY_INPUT_A] == 1) {
+            // player.PlayerAttack();
+        }
+        break;
+    case PLAYER_UI_ITEM:
+        if (this->key[KEY_INPUT_I] == 1) {
+            // player.PlayerItem();
+        }
+        break;
+    case PLAYER_UI_WAIT:
+        if (this->key[KEY_INPUT_W] == 1) {
+            // player.PlayerWait();
+        }
+        break;
+    default:
+        break;
+    }
 }
 
-//ƒJ[ƒ\ƒ‹Ø‚è‘Ö‚¦
+// ã‚«ãƒ¼ã‚½ãƒ«åˆ‡ã‚Šæ›¿ãˆ
 VOID Cursor::Switching() {
-	
-	//if (isPlayerSelected == TRUE && this->key[KEY_INPUT_SPACE] == 1)//ƒJ[ƒ\ƒ‹‚ğƒvƒŒƒCƒ„‚Pw’è‚µ‚©‚Âspace‚ğ‰Ÿ‚µ‚½ê‡
-	//{
-	//
-	//	isMapCursor = FALSE;        //FALSE‚Ìê‡@ƒ}ƒbƒvƒJ[ƒ\ƒ‹•`‰æOFF
-	//}
-
-	if (isMapCursor == FALSE)
-	{
-		if (this->key[KEY_INPUT_X] == 1) {//ƒvƒŒƒCƒ„UI‚©‚çƒGƒXƒP[ƒv
-			
-			//ƒŒƒCƒ„UIƒJ[ƒ\ƒ‹•`‰æOFF‚µ@ƒ}ƒbƒvƒJ[ƒ\ƒ‹•`‰æON ƒ}ƒbƒvƒJ[ƒ\ƒ‹‚É–ß‚·
-			isMapCursor = TRUE;
-		
-		}
-
-	}
+    if (isMapCursor == FALSE) { // playerUIã‚«ãƒ¼ã‚½ãƒ«ã‚’æç”»
+        if (this->key[KEY_INPUT_X] == 1) { // ãƒ—ãƒ¬ã‚¤ãƒ¤UIã‹ã‚‰ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—
+            isMapCursor = FALSE; // ãƒãƒƒãƒ—ã‚«ãƒ¼ã‚½ãƒ«æç”»OFFã—
+            isPlayerUICursor = TRUE; // ãƒ—ãƒ¬ã‚¤ãƒ¤UIã‚«ãƒ¼ã‚½ãƒ«æç”»ON ãƒ—ãƒ¬ã‚¤ãƒ¤UIã‚«ãƒ¼ã‚½ãƒ«ã«åˆ‡ã‚Šæ›¿ãˆã‚‹
+        }
+    }
 }
-	

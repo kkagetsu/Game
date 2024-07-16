@@ -136,8 +136,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
                     cursor.MapInfoShow();
                     cursor.Switching();
                     if (cursor.isMapCursor == FALSE) {
-                        cursor.PlayerUICursorDraw();     //そしてプレイヤUIカーソル描画する
-                        cursor.PlayerControl();          //コントロールもう呼び出す
+                        cursor.PlayerUICursorDraw();     //プレイヤUIカーソル描画する
+                        cursor.PlayerUIControl();          //カーソルコントロールもう呼び出す
                     }
                     player.PlayerPos();
                     //キャラのステータスを表示する
