@@ -32,6 +32,7 @@ public:
 	BOOL isMapCursor;//マップカーソルの出現／消失
 	BOOL isBlink;  // gtp点滅効果のための表示フラグ
 	BOOL isPlayerSelected; //by gtp プレイヤーが選択されているかを示すフラグ
+	BOOL isPlayerMove; //プレイヤーのMove2表示状態フラグ
 
 	Player& player; // /by gtp プレイヤーの参照
 

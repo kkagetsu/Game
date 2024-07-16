@@ -6,29 +6,30 @@
 #define COLUMN_COUNT (256)//一行ごとのバファ
 #define COLUMN        (20) //行数
 
-int fieldGraph[6]  ;
-int playersGraph[3]  ;
-int GHandleGrass   ;
-int GHandleForest  ;
-int GHandleVillage ;
-int GHandleWall    ;
-int GHandleStone   ;
-int GHandleBridge  ;
-int GHandleDrive   ;
-extern BOOL isScenario    ;
-extern BOOL isEventTutorial ;
-char buff[256][COLUMN_COUNT] = { 0 }; // シナリオを格納するバッファ
+int fieldGraph[6]  ;                  //バトルフィールド地形画像格納 
+int playersGraph[3];                  //キャラのたち絵（背景抜き）
+int GHandleGrass   ;                  //バトルフィールド地形---草
+int GHandleForest  ;                  //バトルフィールド地形---森
+int GHandleVillage ;                  //バトルフィールド地形---村
+int GHandleWall    ;                  //バトルフィールド地形---壁
+int GHandleStone   ;                  //バトルフィールド地形---石
+int GHandleBridge  ;                  //バトルフィールド地形---橋
+int GHandleDrive   ;                  //バトルフィールド地形---川
+extern BOOL isScenario    ;           //シナリオ用falg
+extern BOOL isEventTutorial ;         //チュートリアル用falg
+char buff[COLUMN_COUNT][COLUMN_COUNT] = { 0 }; // シナリオを格納するバッファ
 int lineCount = 0;                    // 読み込んだ行数
 
+//キャラ選択時　背景切り替え関数
 unsigned int GetFlashingColor(int time)
 {
 	int phase = (time / 30) % 3; // 90フレームごとに色を変える
 	switch (phase)
 	{
-	case 0 : return GetColor(0, 0, 0); // 黒
+	case 0 : return GetColor(0, 0, 0);       // 黒
 	case 1 : return GetColor(128, 128, 128); // 灰色
 	case 2 : return GetColor(255, 255, 255); // 白
-	default: return GetColor(0, 0, 0);
+	default: return GetColor(0, 0, 0);       //選択されていない場合初期色と同じ黒のまま
 	}
 }
 
@@ -36,9 +37,11 @@ unsigned int GetFlashingColor(int time)
 
 //char buff[20][COLUMN_COUNT]     ;//シナリオを格納するバッファ
 
+
+//プレイシーンの初期化
 VOID PlaySceneInit() {
 
-	
+	//まとめて一度だけ画像をロードします
 	GHandleGrass   = LoadGraph("picture/maptile_sogen_02.png");
 	GHandleForest  = LoadGraph("picture/ki_02_01.png");
 	GHandleVillage = LoadGraph("picture/ie_front_01_red.png");
@@ -47,7 +50,7 @@ VOID PlaySceneInit() {
 	GHandleBridge  = LoadGraph("picture/bridge_side_brown.png");
 	GHandleDrive   = LoadGraph("picture/maptile_umi_02.png");
 
-	fieldGraph[0] = GHandleGrass;
+	fieldGraph[0] = GHandleGrass;   
 	fieldGraph[1] = GHandleVillage;
 	fieldGraph[2] = GHandleWall;
 	fieldGraph[3] = GHandleStone;
@@ -59,8 +62,8 @@ VOID PlaySceneInit() {
 	playersGraph[TANAKA] = LoadGraph("picture/cha_tachie/K2B7jixyorRCt.png");
 
 
-	isScenario = true;
-	isEventTutorial = true;
+	isScenario = true;  //最初描画させたいのはシナリオなので　trueに設定する
+	isEventTutorial = true;//最初のバトルシーンがチュートリアルなので　trueに設定する
 	//FILE* fp = NULL; //ファイル操作の準備 ファイルポインタ変数
 	//fp = fopen("scenario.txt", "r"); //textをオープンします
 	//if (fp == NULL) {
@@ -75,13 +78,16 @@ VOID PlaySceneInit() {
 	//}
 	//fclose(fp); //書き込む語ファイルcloseします
 	//fp = NULL; //fpポインタをリセット
-	 // ファイル操作の準備
-	FILE* fp = fopen("scenario.txt", "r"); // テキストファイルをオープン
-	if (fp == NULL) {
+	 
+	// ファイル操作の準備
+	FILE* fp = fopen("scenario.txt", "r"); // テキストファイルをオープンし読み取る
+	if (fp == NULL) {                      //debug
 		OutputDebugString("scenario.txt is not opened. abort\n");
 		return;
 	}
-
+	//もしbuffの[lineCount]行目の最後がヌール文字0じゃない場合
+	//fpで読み取ったテキスト文字の内容をbuffに書き込む　２５６バトルごとに行切り替え
+	//ヌールが現れるまで(テキスト内容の最後まで必ずヌール'\0')
 	while (fgets(buff[lineCount], COLUMN_COUNT, fp) != NULL) {
 		lineCount++;
 	}
@@ -166,24 +172,29 @@ BOOL isLoading(BOOL load) {
 //			span += 30;
 //		}
 //	}
+
+
+//シナリオ描画
 VOID ScenarioDraw() {
 	static int totalLength = 0; // すべての文字の総数
 	static char displayStr[256 * COLUMN_COUNT] = ""; // 表示する文字列
-	static int t = 0;
-	static int tmax = 20;
+	static int t = 0;//タイマー
+	static int tmax = 15;//タイマーの上限
 	static int currentPos = 0; // 現在の文字位置
-	static bool messageDisplayed = false; // メッセージが完全に表示されたかどうかのフラグ
+	static bool messageDisplayed = false; // シナリオ　メッセージが完全に表示されたかどうかのフラグ
 
-	if (totalLength == 0) {
-		for (int i = 0; i < lineCount; i++) {
-			totalLength += strlen(buff[i]);
+	//バッファからテキスト文字をコピーする処理↓↓↓
+	if (totalLength == 0) {     //もしシナリオ格納用のtotalLengthの文字総数が0の場合
+		for (int i = 0; i < lineCount; i++) {//２５６ごとにlineCountが一づつ増やす
+			totalLength += strlen(buff[i]);//buffのi番目の要素（文字列）の長さを返し、totalLengthに加える
 		}
 	}
-
-	t++;
-	if (t > tmax && !messageDisplayed) {
-		if (currentPos < totalLength) {
-			int line = 0;
+	t++;  //タイマーカウント開始(t=t+(1/最大fps))
+	if (t > tmax && !messageDisplayed) { //もしタイマーの時間がtの上限に超えたらかつシナリオテキストがまだ全部描画されていない
+		                                 //(ヌールに至っていない)場合
+		if (currentPos < totalLength)    //totalLength＞currentPos(0)の場合は一つしかない　テキストがまだ完全に描画終わてない　
+		{
+			int line = 0;               
 			int pos = currentPos;
 			while (pos >= strlen(buff[line])) {
 				pos -= strlen(buff[line]);
@@ -225,7 +236,7 @@ VOID ScenarioDraw() {
 				x2, y2 - yUp,
 				playersGraph[KOUTAROU], TRUE);
 
-			DrawString(x1, y2 - yUp + 1, "コウタロウ\n(左クリック長押しで決定)", 0xff0000);
+			DrawString(x1, y2 - yUp + 1, "コウタロウ\n(左クリック長押しで決定)", 0xFB544E);
 
 			if (GetMouseInput() & MOUSE_INPUT_LEFT) {
 				static int t = 0;
@@ -261,7 +272,7 @@ VOID ScenarioDraw() {
 				x2 + span + 10, y2 - yUp,
 				playersGraph[BOBU], TRUE);
 
-			DrawString(x1 + span + 10, y2 - yUp + 1, "ボブ\n(未実装)", 0xff0000);
+			DrawString(x1 + span + 10, y2 - yUp + 1, "ボブ\n(未実装)", 0xF5E496);
 		}
 		else {
 			DrawExtendGraph(x1 + span + 10, y1 ,
@@ -274,7 +285,7 @@ VOID ScenarioDraw() {
 				x2 + span * 2 + 20, y2 - yUp,
 				playersGraph[TANAKA], TRUE);
 
-			DrawString(x1 + span * 2 + 20, y2 - yUp + 1, "田中\n(未実装)", 0xff0000);
+			DrawString(x1 + span * 2 + 20, y2 - yUp + 1, "田中\n(未実装)", 0x825D89);
 		}
 		else {
 			DrawExtendGraph(x1 + span * 2 + 20, y1,
@@ -304,9 +315,6 @@ VOID ScenarioDraw() {
 	}
 
 }
-
-
-
 
 VOID FieldLineDraw() {
 	
@@ -432,7 +440,7 @@ VOID EventTutorial() {
 			DrawString(xNameStart, yNameStart, "ボブ", 0xffffff);
 			DrawString(xNameStart + span, yNameStart + span, "『違う、違う、「惑星G.L」に行く前にちょっと...\n不安だけど、私の実力じゃ皆の足纏かもしれません』", 0xF5E496);
 		}
-		else if (t1 >=1200 * times && t1 < 1800 * times) {
+		else if (t1 >1200 * times && t1 < 1800 * times) {
 			DrawString(xNameStart, yNameStart, "コウタロウ", 0xffffff);
 			DrawString(xNameStart + span, yNameStart + span, "『じゃ、出発まで後一時間あるから、どう俺と稽古しない』", 0xFB544E);
 		}
@@ -444,13 +452,15 @@ VOID EventTutorial() {
 		{
 			DrawString(xNameStart, yNameStart, "コウタロウ", 0xffffff);
 			DrawString(xNameStart + span, yNameStart + span, "『良い構えだ、全力で来い！』", 0xFB544E);
-			if (t1 > 3000) {
+			if (t1 > 3000 * times) {
 				isEventTutorial = FALSE;
 			}
 		}
 
 		t1++;
-	
+		if (CheckHitKey(KEY_INPUT_Z) == 1) {
+			t1 = 3000*times;
+		}
 }
 //VOID Deleteghandle() {
 //	for (int i = 0; i < 6; i++) {

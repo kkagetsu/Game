@@ -67,8 +67,9 @@ VOID TitleDraw() {
 			"%s%s", GameSceneName[nowGameScene], "描画中");
 
 	}
-	BackGroundDraw();
-	TitleMenuDraw();
+	BackGroundDraw();  //ゲームタイトル最初の背景画像を描画
+	TitleMenuDraw();   //もし左クリックまたはspaceキーを押したら　
+	                   //タイトル画面のメニュー選択に移す
 	return;
 }
 

@@ -5,7 +5,7 @@
 
 Player::Player() {
 
-	strcpy(this->name, "プレイヤー");
+	strcpy(this->name, "コウタロウ");
 	strcpy(this->job,"剣士");
 	strcpy(this->speSkill,"一匹狼");
 	strcpy(this->jobSkill[0], "双連撃");
@@ -84,9 +84,9 @@ VOID Player::StatusShow() {
 	
 	//p_level
 	//DrawString(200,490,"Lv  %d",level, 0xFFFFFF);
-	DrawFormatString(200, 490, 0xFFFFFF, "Lv  %d",level );
+	DrawFormatString(200 + 15 * 4, 490, 0xFFFFFF, "Lv  %d",level );
 	//p_exp
-	DrawFormatString(200 + 15 * 4, 490, 0xFFFFFF,"exp %d", exp);
+	DrawFormatString(300 + 15 * 4, 490, 0xFFFFFF,"exp %d", exp);
 
 	//p_hp
 	{
@@ -140,26 +140,21 @@ VOID Player::PlayerPosInit() {
 		this->posx = 16;
 		this->posy = 7;
 	}
-	DrawExtendGraph(MASU___SIZE * posx, 
-		            MASU___SIZE * posy, 
-		            MASU___SIZE + MASU___SIZE * posx, 
-		            MASU___SIZE + MASU___SIZE * posy, 
-		            grHandle[PIXEL__E], 
-		            TRUE);
+
 
 }
 VOID Player::PlayerPos() {
 
-	int playmove = DrawExtendGraph(MASU___SIZE * posx,
+	int playMove = DrawExtendGraph(MASU___SIZE * posx,
 		MASU___SIZE * posy,
 		MASU___SIZE + MASU___SIZE * posx,
 		MASU___SIZE + MASU___SIZE * posy,
 		grHandle[PIXEL__E],
 		TRUE);
-	if (playmove == -1)
+	if (playMove == -1)
 	{
 		{
-			OutputDebugString("playmove エラー!!\n");
+			OutputDebugString("playMove エラー!!\n");
 		}
 	}
 
@@ -213,7 +208,7 @@ VOID Player::PlayerUiShow() {
 
 	
 }
-VOID Player::PlayerMove1(){
+VOID Player::PlayerMoveMessage(){
 
 	DrawString(pUIMessageX, pUIMessageY,"Move\nkey: m",0xffffff);
 	
@@ -236,7 +231,7 @@ VOID Player::PlayerItem(){
 
 
 }
-VOID Player::PlayerMove2() {
+VOID Player::PlayerMove() {
 
 	for (int dy = -move; dy <= move; ++dy) {
 		for (int dx = -move; dx <= move; ++dx) {
@@ -253,7 +248,7 @@ VOID Player::PlayerMove2() {
 					int drawY2 = drawY1 + MASU___SIZE;
 					// 描画ブレンドモードを設定 (透明度設定)
 					SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128); // 128は透明度の値 (0: 完全透明, 255: 完全不透明)
-					DrawBox(drawX1, drawY1, drawX2, drawY2, 0x0000ff, TRUE); // 緑色の枠線で描画
+					DrawBox(drawX1, drawY1, drawX2, drawY2, 0x0000ff, TRUE); // 蒼色の枠線で描画
 					// 描画ブレンドモードを元に戻す
 					SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 				}
