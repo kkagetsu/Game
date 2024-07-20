@@ -147,7 +147,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
                         int mx = 0;
                         int my = 0;
                         GetMousePoint(&mx, &my);
-
+                   
                         DrawFormatString(250, 0, 0xffffff, "x=%d,y=%d", mx, my);
                     }
                     

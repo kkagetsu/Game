@@ -24,21 +24,39 @@ enum tagE_PLAYER_UI_T
 ,   PLAYER_UI_E_COUNT
 
 };
-enum E_PLAYER_UI_T {
-	PLAYER_UI_MOVE
-	, PLAYER_UI_ATTACK
-	, PLAYER_UI_ITEM
-	, PLAYER_UI_WAIT
-	, PLAYER_UI_SPSKILL
-	, PLAYER_UI_SKILLPOINT
-	, PLAYER_UI_SKILL1
-	, PLAYER_UI_SKILL2
-	, PLAYER_UI_SKILL3
-	, PLAYER_UI_SKILL4
+enum tagE_PLAYER_UI_T {
+	  PLAYER_UI_MOVE
+,     PLAYER_UI_ATTACK
+,     PLAYER_UI_ITEM
+,     PLAYER_UI_WAIT
+,     PLAYER_UI_SPSKILL
+,     PLAYER_UI_SKILLPOINT
+,     PLAYER_UI_SKILL1
+,     PLAYER_UI_SKILL2
+,     PLAYER_UI_SKILL3
+,     PLAYER_UI_SKILL4
 
-	, PLAYER_UI_COUNT
-	, PLAYER_UI_INVALID = -1
-	, PLAYER_UI_BEGIN
+,     PLAYER_UI_COUNT
+,     PLAYER_UI_INVALID = -1
+,     PLAYER_UI_BEGIN
+
+};
+
+enum tagE_PLAYER_ACTION {
+	PLAYER_ACTION_NONE   //COST 0
+	, PLAYER_ACTION_MOVE	 //COST 1
+	, PLAYER_ACTION_ATTACK //COST 2
+	, PLAYER_ACTION_ITEM	 //COST 2
+	, PLAYER_ACTION_WAIT	 //COST 2
+	, PLAYER_ACTION_SPSKILL//COST 2
+	, PLAYER_ACTION_SKILL1 //COST 2
+	, PLAYER_ACTION_SKILL2 //COST 2
+	, PLAYER_ACTION_SKILL3 //COST 2
+	, PLAYER_ACTION_SKILL4 //COST 2
+
+	, PLAYER_ACTION_COUNT
+	, PLAYER_ACTION_INVALID = - 1
+    , PLAYER_ACTION_BEGIN
 
 };
 
@@ -61,7 +79,7 @@ private:
 	int agi;                //素早さ
 	int luc;			    //運
 	int move;               //移動力
-	int action;             //行動　攻撃　２　移動１　item　２　スキル　２　action < 0　行動終了
+	int action;             //行動　攻撃　２　移動１　item　２　スキル　２　action < = 0　行動終了
 
 
 	int grHandle[COUNT__E]; //player１のたち絵
@@ -69,34 +87,35 @@ private:
 	int posx, posy;         //座標
 	const int pUIMessageX = 730;   //プレイヤのUI情報の文字表示座標
 	const int pUIMessageY = 500;	//プレイヤのUI情報の文字表示座標
+	tagE_PLAYER_ACTION arPlayerAction;
 
 public:
 
 	Player(); //プレイヤーの初期化
-	VOID GraphicLoad();
+	VOID GraphicLoad();//player1が使う絵をすべてここでロードする
 
-	VOID StatusShow();
+	VOID StatusShow();//プレイヤのUI描画はすべてこの関数の中　ステータス画面　+ コマンド指令画面(PlayerUiShow)
 	
-	VOID PlayerPosInit();
+	VOID PlayerPosInit();//プレイヤ１の生成場合を指定（初期化）
 
-	VOID PlayerPos();
+	VOID PlayerPos();//プレイヤのい居場所を描画
 
-	VOID PlayerUiShow();
-	VOID PlayerMoveMessage();
-	VOID PlayerMove();
-	VOID PlayerAttackMessage();
-	VOID PlayerItemMessage();
-	VOID PlayerWaitMessage();
-
+	VOID PlayerUiShow();//コマンド指令画面を描画
+	VOID PlayerMoveMessage();//キー提示
+	VOID PlayerAbleMove();//移動範囲展開の描画
+	VOID PlayerAttackMessage();//キー提示
+	VOID PlayerItemMessage();//キー提示
+	VOID PlayerWaitMessage();//キー提示
+	//VOID PlayerAction();//プレイヤの
 	VOID PlayerUiUpdata();
 	unsigned int GetFlashingColor(int time);
 
-	// gtp ゲッタ-座標
+	//  ゲッタ-座標
 	inline int getPosX() const { return posx; } //inline化
 	inline int getPosY() const { return posy; }	//inline化
 	inline int getMove() const { return move; }	//inline化
 
 	VOID setPosX(int x) { this->posx = x; }
-	void setPosY(int y) { this->posy = y; }
+	VOID setPosY(int y) { this->posy = y; }
 
 }; 

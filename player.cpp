@@ -1,51 +1,51 @@
-#define _CRT_SECURE_NO_WARNINGS
+ï»¿#define _CRT_SECURE_NO_WARNINGS
 #include "player.h"
 #include "playScene.h"
 #include "gameManager.h"
 
 Player::Player() {
 
-	strcpy(this->name, "ƒRƒEƒ^ƒƒE");
-	strcpy(this->job,"Œ•m");
-	strcpy(this->speSkill,"ˆê•C˜T");
-	strcpy(this->jobSkill[0], "‘o˜AŒ‚");
-	strcpy(this->jobSkill[1], "ƒXƒLƒ‹2");
-	strcpy(this->jobSkill[2], "ƒXƒLƒ‹3");
+	strcpy(this->name, "ã‚³ã‚¦ã‚¿ãƒ­ã‚¦");
+	strcpy(this->job,"å‰£å£«");
+	strcpy(this->speSkill,"ä¸€åŒ¹ç‹¼");
+	strcpy(this->jobSkill[0], "åŒé€£æ’ƒ");
+	strcpy(this->jobSkill[1], "ã‚¹ã‚­ãƒ«2");
+	strcpy(this->jobSkill[2], "ã‚¹ã‚­ãƒ«3");
 	this->level = 1;    
-	this->exp = 0;    //100‚²‚Æ‚É‚É if(exp>=100) level++
-	this->hp = 17;	  //‘Ì—Í’l
-	this->mp = 12;	  //–‚—Í’l
+	this->exp = 0;    //100ã”ã¨ã«ã« if(exp>=100) level++
+	this->hp = 17;	  //ä½“åŠ›å€¤
+	this->mp = 12;	  //é­”åŠ›å€¤
 	this->pow =10;	  //
 	this->def = 7;	  //
-	this->dex = 6;	  //–½’†—¦=100-(agi-dex)*10
+	this->dex = 6;	  //å‘½ä¸­ç‡=100-(agi-dex)*10
 	this->lnt = 9;	  //
 	this->mdf = 7;	  //
 	this->agi = 5;	  //
-	this->luc = 8;	  //ƒNƒŠƒeƒBƒJƒ‹ƒqƒbƒg—¦=(luck*1.25%) ƒ_ƒ[ƒW attack x 1.5
-	this->move = 3;   //ˆÚ“®—Ê
+	this->luc = 8;	  //ã‚¯ãƒªãƒ†ã‚£ã‚«ãƒ«ãƒ’ãƒƒãƒˆç‡=(luck*1.25%) ãƒ€ãƒ¡ãƒ¼ã‚¸ attack x 1.5
+	this->move = 3;   //ç§»å‹•é‡
 	this->posx = 0;
 	this->posy = 0;
-	this->action = 0;
+	this->action = 2;
 
-	memset(grHandle, NULL, sizeof(grHandle)); //‰æ‘œ‚Ìload‚Æ‰æ‘œ‚ğŠi”[—p‚Ì•Ï”‚ğ•ª‚¯‚Ä‚»‚ê‚¼‚ê‰Šú‰»‚·‚é ‚±‚±‚Å‚Íƒ[ƒƒNƒŠƒA
+	memset(grHandle, NULL, sizeof(grHandle)); //ç”»åƒã®loadã¨ç”»åƒã‚’æ ¼ç´ç”¨ã®å¤‰æ•°ã‚’åˆ†ã‘ã¦ãã‚Œãã‚ŒåˆæœŸåŒ–ã™ã‚‹ ã“ã“ã§ã¯ã‚¼ãƒ­ã‚¯ãƒªã‚¢
 	memset(grHandleUI, NULL, sizeof(grHandleUI));
 }
 
 VOID Player :: GraphicLoad() {
 
-	grHandle[TACHI1_E] = LoadGraph("picture/player1/player_tachie1.png");
-	grHandle[TACHI2_E] = LoadGraph("picture/player1/player_tachie2.png");
-	grHandle[WAKU1__E] = LoadGraph("picture/player1/player_waku1.png");
-	grHandle[WAKU2__E] = LoadGraph("picture/player1/player_waku2.png");
-	grHandle[PIXEL__E] = LoadGraph("picture/player1/player_pixel.png");
-
-	grHandleUI[MOVE_E]      = LoadGraph("picture/player1_ui/move.png");
-    grHandleUI[ATTACK_E]	= LoadGraph("picture/player1_ui/attack.png");
-    grHandleUI[ITEAM_E]		= LoadGraph("picture/player1_ui/iteam.png");
-    grHandleUI[WAIT_E]		= LoadGraph("picture/player1_ui/wait.png");
-    grHandleUI[SPSKILL_E]	= LoadGraph("picture/player1_ui/wolf.png");
-    grHandleUI[LEARNSKILL_E]= LoadGraph("picture/player1_ui/book.png");
-    grHandleUI[SKILL_1_E]   = LoadGraph("picture/player1_ui/skill1.png");
+	grHandle[TACHI1_E] = LoadGraph("picture/player1/player_tachie1.png");//ãŸã¡çµµï¼‘ã‚’ãƒ­ãƒ¼ãƒ‰ã™ã‚‹ 
+	grHandle[TACHI2_E] = LoadGraph("picture/player1/player_tachie2.png");//ãŸã¡çµµï¼’
+	grHandle[WAKU1__E] = LoadGraph("picture/player1/player_waku1.png")  ;//playeruiç”¨ã‚­ãƒ£ãƒ©ã‚¢ã‚¤ã‚³ãƒ³1
+	grHandle[WAKU2__E] = LoadGraph("picture/player1/player_waku2.png")  ;//playeruiç”¨ã‚­ãƒ£ãƒ©ã‚¢ã‚¤ã‚³ãƒ³2
+	grHandle[PIXEL__E] = LoadGraph("picture/player1/player_pixel.png")  ;//ãƒ”ã‚¯ã‚»ãƒ«ç”»åƒ(ãƒãƒˆãƒ«ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ç”¨)
+																		 
+	grHandleUI[MOVE_E]      = LoadGraph("picture/player1_ui/move.png");	 //playeruiç”¨move
+    grHandleUI[ATTACK_E]	= LoadGraph("picture/player1_ui/attack.png");//playeruiç”¨attack
+    grHandleUI[ITEAM_E]		= LoadGraph("picture/player1_ui/iteam.png") ;//playeruiç”¨item
+    grHandleUI[WAIT_E]		= LoadGraph("picture/player1_ui/wait.png")  ;//playeruiç”¨wait
+    grHandleUI[SPSKILL_E]	= LoadGraph("picture/player1_ui/wolf.png")  ;//playeruiç”¨spskill
+    grHandleUI[LEARNSKILL_E]= LoadGraph("picture/player1_ui/book.png")  ;//playeruiç”¨learnskill
+    grHandleUI[SKILL_1_E]   = LoadGraph("picture/player1_ui/skill1.png");//playeruiç”¨skill1
 
 
 
@@ -53,34 +53,34 @@ VOID Player :: GraphicLoad() {
 }
 
 /****************************************************************************
-ŠÖ”–¼FStatusShow
-‹@”\@FƒJ[ƒ\ƒ‹(À•W==ƒvƒŒƒCƒ„[À•W)‚ªƒLƒƒƒ‰[‚ğ‘I‘ğ‚·‚é‚½‚ÑA‰æ–Ê‚Ì‰º•û‚É•\¦‚³‚ê‚éƒXƒe[ƒ^ƒXî•ñˆê——
-ˆø”@Fbool isPlayer(ƒJ[ƒ\ƒ‹‚Åplayer‚ğ‘I‘ğ’† TRUE)
-		ˆÈã‚ÌğŒ‚ğ–‘«‚µ‚¢‚éê‡ƒLƒƒƒ‰‚ÌƒXƒe[ƒ^ƒX‚ğ•\¦‚³‚¹‚é
+é–¢æ•°åï¼šStatusShow
+æ©Ÿèƒ½ã€€ï¼šã‚«ãƒ¼ã‚½ãƒ«(åº§æ¨™==ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åº§æ¨™)ãŒã‚­ãƒ£ãƒ©ãƒ¼ã‚’é¸æŠã™ã‚‹ãŸã³ã€ç”»é¢ã®ä¸‹æ–¹ã«è¡¨ç¤ºã•ã‚Œã‚‹ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹æƒ…å ±ä¸€è¦§
+å¼•æ•°ã€€ï¼šbool isPlayer(ã‚«ãƒ¼ã‚½ãƒ«ã§playerã‚’é¸æŠä¸­ TRUE)
+		ä»¥ä¸Šã®æ¡ä»¶ã‚’æº€è¶³ã—ã„ã‚‹å ´åˆã‚­ãƒ£ãƒ©ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚’è¡¨ç¤ºã•ã›ã‚‹
 
-•Ô‹p’l:	‚È‚µ
+è¿”å´å€¤:	ãªã—
 *****************************************************************************/
 VOID Player::StatusShow() {
 
 
-	//0,12*40‚ÌÀ•W‚ÅƒLƒƒƒ‰ƒAƒCƒRƒ“‚ğ¶¬ 
+	//0,12*40ã®åº§æ¨™ã§ã‚­ãƒ£ãƒ©ã‚¢ã‚¤ã‚³ãƒ³ã‚’ç”Ÿæˆ 
 	//int playerG = DrawGraph(0, GRID_HEIGHT * MASU___SIZE, grHandle[TACHI1_E],TRUE);
 	int playerG = DrawExtendGraph(0, GRID_HEIGHT * MASU___SIZE,120,600, grHandle[WAKU1__E],TRUE);
 
 	if (playerG == -1)
 	{
-		OutputDebugString("playerG ƒGƒ‰[!!\n");
+		OutputDebugString("playerG ã‚¨ãƒ©ãƒ¼!!\n");
 	}
-	//p_name ƒLƒƒƒ‰–¼
+	//name ã‚­ãƒ£ãƒ©å
 	{
 	DrawString(130,490,name,0xFF0000);
 	}
-	//p_jobƒLƒƒƒ‰‚ÌE‹Æ
+	//p_jobã‚­ãƒ£ãƒ©ã®è·æ¥­
 	//DrawString(130,490+15,job, 0xFFFFFF);
-	DrawFormatString(130, 490 + 15, 0xFFFFFF, "E‹Æ: %s",job);
-	//p_speSkill “Á«
+	DrawFormatString(130, 490 + 15, 0xFFFFFF, "è·æ¥­: %s",job);
+	//p_speSkill ç‰¹æ€§
 	//DrawString(130,490+15*2,speSkill, 0xFFFFFF);
-	DrawFormatString(130, 490 + 15 * 3, 0xFFFFFF, "“Á«: %s", speSkill);
+	DrawFormatString(130, 490 + 15 * 3, 0xFFFFFF, "ç‰¹æ€§: %s", speSkill);
 	
 	//p_level
 	//DrawString(200,490,"Lv  %d",level, 0xFFFFFF);
@@ -91,7 +91,7 @@ VOID Player::StatusShow() {
 	//p_hp
 	{
 		DrawString(200 + 15*4, 490 + 15 * 1,"Hp",0xFFFFFF);
-		//hp‚ÌƒQ[ƒW‚ğ•`‰æ
+		//hpã®ã‚²ãƒ¼ã‚¸ã‚’æç”»
 		for (int i =0; i <= hp; i++) {
 
 			DrawString(200 + 15*5+3*i, 490 + 15 * 1,"l",0x00FF00);
@@ -100,7 +100,7 @@ VOID Player::StatusShow() {
 	//p_mp
 	{
 		DrawString(200 + 15*4, 490 + 15 * 2, "Mp", 0xFFFFFF);
-		//mp‚ÌƒQ[ƒW‚ğ•`‰æ
+		//mpã®ã‚²ãƒ¼ã‚¸ã‚’æç”»
 		for (int i = 0; i <= mp; i++) {
 			DrawString(200 + 15*5 + 3 * i, 490 + 15 * 2, "l", 0x0000FF);
 		}
@@ -135,12 +135,12 @@ VOID Player::StatusShow() {
 
 VOID Player::PlayerPosInit() {
 
-	//ƒ`ƒ…ƒgƒŠƒAƒ‹‚ÌƒLƒƒƒ‰posİ’è
+	//ãƒãƒ¥ãƒˆãƒªã‚¢ãƒ«ã®ã‚­ãƒ£ãƒ©posè¨­å®š
 	if (TUTORIAL == 1) {
 		this->posx = 16;
 		this->posy = 7;
 	}
-
+	//ã‚¹ãƒ†ãƒ¼ã‚¸ã«ã‚ˆã£ã¦åˆæœŸç”Ÿæˆåœ°ç‚¹ãŒé•ã†
 
 }
 VOID Player::PlayerPos() {
@@ -154,19 +154,19 @@ VOID Player::PlayerPos() {
 	if (playMove == -1)
 	{
 		{
-			OutputDebugString("playMove ƒGƒ‰[!!\n");
+			OutputDebugString("playMove ã‚¨ãƒ©ãƒ¼!!\n");
 		}
 	}
 
 }
 
 VOID Player::PlayerUiShow() {
-	//„«„«„«„«„«cü
+	//â”ƒâ”ƒâ”ƒâ”ƒâ”ƒç¸¦ç·š
 	for (int i = 0; i <= 4; i++) {
 		DrawLine(560+i* MASU___SIZE, GRID_HEIGHT * MASU___SIZE, 
 			     560+i* MASU___SIZE, WINDOW_HEIGHT, 0xFF0000);
 	}
-	//‰¡ü
+	//æ¨ªç·š
 	for (int j = 0; j <= 3; j++) {
 		DrawLine(560 , GRID_HEIGHT * MASU___SIZE + MASU___SIZE + j * MASU___SIZE,
 			560 + 4 * MASU___SIZE, GRID_HEIGHT * MASU___SIZE + MASU___SIZE + j * MASU___SIZE, 0xFF0000);
@@ -175,16 +175,16 @@ VOID Player::PlayerUiShow() {
 
 
 		//x560y480 x560+40 y480+40
-	//ˆÚ“®ƒAƒCƒRƒ“
+	//ç§»å‹•ã‚¢ã‚¤ã‚³ãƒ³
 	//int moveGraphic = DrawExtendGraph(560 + 2, GRID_HEIGHT * MASU___SIZE + 2,
 	//	                        600 - 2, GRID_HEIGHT * MASU___SIZE+ MASU___SIZE - 2, grHandleUI[MOVE_E], TRUE);
 	//if (moveGraphic == -1)
 	//{
-	//	OutputDebugString("moveG ƒGƒ‰[!!\n");
+	//	OutputDebugString("moveG ã‚¨ãƒ©ãƒ¼!!\n");
 	//}
 	for (int i = 0; i <= PLAYER_UI_E_COUNT-4; i++) {
 
-		// 0ˆÚ“®ƒAƒCƒRƒ“ 1UŒ‚@2ƒAƒCƒeƒ€@3‘Ò‹@
+		// 0ç§»å‹•ã‚¢ã‚¤ã‚³ãƒ³ 1æ”»æ’ƒã€€2ã‚¢ã‚¤ãƒ†ãƒ ã€€3å¾…æ©Ÿ
 		DrawExtendGraph(560 + i*MASU___SIZE + 2, GRID_HEIGHT * MASU___SIZE + 2,
 			600 + i * MASU___SIZE  - 2, GRID_HEIGHT * MASU___SIZE + MASU___SIZE - 2, grHandleUI[i], TRUE);
 
@@ -192,15 +192,15 @@ VOID Player::PlayerUiShow() {
 
 
 	}
-	  //“Á«
+	  //ç‰¹æ€§
 	    DrawExtendGraph(560 + 1 * MASU___SIZE + 2, GRID_HEIGHT * MASU___SIZE+ MASU___SIZE + 2,
 		600 + 1 * MASU___SIZE - 2, GRID_HEIGHT * MASU___SIZE + 2*MASU___SIZE - 2, grHandleUI[SPSKILL_E], TRUE);
 
-      //ƒXƒLƒ‹ƒAƒbƒv
+      //ã‚¹ã‚­ãƒ«ã‚¢ãƒƒãƒ—
 		DrawExtendGraph(560 + 3 * MASU___SIZE + 2, GRID_HEIGHT * MASU___SIZE + MASU___SIZE + 2,
 			600 + 3 * MASU___SIZE - 2, GRID_HEIGHT * MASU___SIZE + 2 * MASU___SIZE - 2, grHandleUI[LEARNSKILL_E], TRUE);
 
-	 //ƒXƒLƒ‹‚P
+	 //ã‚¹ã‚­ãƒ«ï¼‘
 		DrawExtendGraph(560 + 0 * MASU___SIZE + 2, GRID_HEIGHT * MASU___SIZE + 2*MASU___SIZE + 2,
 			600 + 0 * MASU___SIZE - 2, GRID_HEIGHT * MASU___SIZE + 3 * MASU___SIZE - 2, grHandleUI[SKILL_1_E], TRUE);
 
@@ -208,13 +208,14 @@ VOID Player::PlayerUiShow() {
 
 	
 }
+//ã‚¢ã‚¤ã‚³ãƒ³moveã®ã‚·ãƒ§ãƒƒãƒˆã‚­ãƒ¼
 VOID Player::PlayerMoveMessage(){
 
 	DrawString(pUIMessageX, pUIMessageY,"Move\nkey: m",0xffffff);
 	
 
 }
-
+//ã‚¢ã‚¤ã‚³ãƒ³attackã®ã‚·ãƒ§ãƒƒãƒˆã‚­ãƒ¼
 VOID Player::PlayerAttackMessage(){
 
 	DrawString(pUIMessageX, pUIMessageY, "Attack\nkey: a", 0xffffff);
@@ -225,37 +226,56 @@ VOID Player::PlayerAttackMessage(){
 	}
 
 }
+//ã‚¢ã‚¤ã‚³ãƒ³itemã®ã‚·ãƒ§ãƒƒãƒˆã‚­ãƒ¼
 VOID Player::PlayerItemMessage(){
 
 	DrawString(pUIMessageX, pUIMessageY, "Item\nkey: b", 0xffffff);
 
 
 }
-VOID Player::PlayerMove() {
+VOID Player::PlayerAbleMove() {
 
-	for (int dy = -move; dy <= move; ++dy) {
-		for (int dx = -move; dx <= move; ++dx) {
-			if (abs(dx) + abs(dy) <= move) { // ƒ_ƒCƒ„ƒ‚ƒ“ƒhŒ`‚Ì”ÍˆÍ“à‚©‚ğƒ`ƒFƒbƒN
-				int x = posx + dx;
-				int y = posy + dy;
+	for (int dy = -move; dy <= move; dy++) {     // Yè»¸ãŒã€€-3 ã‹ã‚‰ã€€+ï¼“ã¾ã§ã€€1ã¥ã¤ã€€ç¸¦ãƒ—ãƒ©ã‚¹  
+		for (int dx = -move; dx <= move; dx++) { // Xè»¸ãŒã€€-3 ã‹ã‚‰ã€€+ï¼“ã¾ã§ã€€1ã¥ã¤ã€€æ¨ªãƒ—ãƒ©ã‚¹
+			//                ãƒ»ãƒ»ãƒ»ãƒ»ãƒ»ãƒ»ãƒ»  
+			//				  ãƒ»ãƒ»ãƒ»ãƒ»ãƒ»ãƒ»ãƒ»
+			//				  ãƒ»ãƒ»ãƒ»ãƒ»ãƒ»ãƒ»ãƒ»
+			//				  ãƒ»ãƒ»ãƒ»ï½ãƒ»ãƒ»ãƒ»
+			//				  ãƒ»ãƒ»ãƒ»ãƒ»ãƒ»ãƒ»ãƒ»
+			//				  ãƒ»ãƒ»ãƒ»ãƒ»ãƒ»ãƒ»ãƒ»
+			//				  ãƒ»ãƒ»ãƒ»ãƒ»ãƒ»ãƒ»ãƒ»
 
-				// ƒ}ƒbƒv”ÍˆÍ“à‚©‚Ç‚¤‚©‚ğƒ`ƒFƒbƒN
+			if (abs(dx) + abs(dy) <= move) { // ãƒ€ã‚¤ãƒ¤ãƒ¢ãƒ³ãƒ‰å½¢ã®ç¯„å›²å†…ã‹ã‚’ãƒã‚§ãƒƒã‚¯
+				//  ã€€ã€€ã€€ã€€ã€€      ãƒ»
+				//ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ãƒ»ãƒ»ãƒ»
+				//ã€€ã€€ã€€ã€€ã€€ã€€ã€€ãƒ»ãƒ»ãƒ»ãƒ»ãƒ»
+				//ã€€ã€€ã€€ã€€ã€€ã€€ãƒ»ãƒ»ãƒ»ï½ãƒ»ãƒ»ãƒ»
+				//ã€€ã€€ã€€ã€€ã€€ã€€ã€€ãƒ»ãƒ»ãƒ»ãƒ»ãƒ»
+				//ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ãƒ»ãƒ»ãƒ»
+				//ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ãƒ»
+				//ifåˆ†ã«ã‚ˆã£ã¦ã€€åº§æ¨™dx+dyã®å€¤ãŒ    <= moveã®åº§æ¨™ã‚’ä¿ç•™ã—    >  åº§æ¨™å…¨éƒ¨pass
+				int x = posx + dx;  //ç¾åœ¨playerã®åº§æ¨™ï½˜ã€€ï¼‹ã€€ä¿ç•™ã•ã‚ŒãŸï½„ï½˜ã€€
+				int y = posy + dy;  //ç¾åœ¨playerã®åº§æ¨™Yã€€ ï¼‹  ä¿ç•™ã•ã‚ŒãŸï½„Yã€€
+
+				//ä»¥ä¸Šã¯å¯èƒ½ç§»å‹•ç¯„å›²ã®ãƒ­ã‚¸ãƒƒã‚¯
+				// ãƒãƒƒãƒ—ç¯„å›²å†…ã‹ã©ã†ã‹ã‚’ãƒã‚§ãƒƒã‚¯
 				if (x >= 0 && x < GRID__WIDTH && y >= 0 && y < GRID_HEIGHT) {
 
-					// ŠâAìA•Ç‚Ìƒ}ƒX‚ğƒXƒLƒbƒv
-					E_LAYOUT_T layout = g_layout[y][x];
-
+					// å²©ã€å·ã€å£ã®ãƒã‚¹ã‚’ã‚¹ã‚­ãƒƒãƒ—
+					E_LAYOUT_T layout = g_layout[y][x]; // x,yçš„åæ ‡å¯¹åº”åœ°å›¾ä¸Šçš„xyåœ°å½¢é…åˆ—
+					//layoutã®ä¸­èº«ãŒå²©ã€å·ã€å£ã§ã¯ãªã„å ´åˆ
 					if (layout != LAYOUT_STONE && layout != LAYOUT_DRIVE && layout != LAYOUT_WALL) {
 
-						// ƒ}ƒX‚Ì’†S‚ğŒvZ
-						int drawX1 = x * MASU___SIZE;
-						int drawY1 = y * MASU___SIZE;
-						int drawX2 = drawX1 + MASU___SIZE;
-						int drawY2 = drawY1 + MASU___SIZE;
-						// •`‰æƒuƒŒƒ“ƒhƒ‚[ƒh‚ğİ’è (“§–¾“xİ’è)
-						SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128); // 128‚Í“§–¾“x‚Ì’l (0: Š®‘S“§–¾, 255: Š®‘S•s“§–¾)
-						DrawBox(drawX1, drawY1, drawX2, drawY2, 0x0000ff, TRUE); // ‘“F‚Ì˜gü‚Å•`‰æ
-						// •`‰æƒuƒŒƒ“ƒhƒ‚[ƒh‚ğŒ³‚É–ß‚·
+						// ãƒã‚¹ã®ä¸­å¿ƒã‚’è¨ˆç®—
+						int drawMASUX = x * MASU___SIZE;
+						int drawMASUY1 = y * MASU___SIZE;
+						int drawMASUX2 = drawMASUX + MASU___SIZE;
+						int drawMASUY2 = drawMASUY1 + MASU___SIZE;
+						// æç”»ãƒ–ãƒ¬ãƒ³ãƒ‰ãƒ¢ãƒ¼ãƒ‰ã‚’è¨­å®š (é€æ˜åº¦è¨­å®š)
+						//æ„å›³çš„åˆ†ã‹ã‚Šæ˜“ãè¦‹ãˆã•ã›ã‚‹
+						SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128); // 128ã¯é€æ˜åº¦ã®å€¤ (0: å®Œå…¨é€æ˜, 255: å®Œå…¨ä¸é€æ˜)
+						DrawBox(drawMASUX, drawMASUY1, drawMASUX2, drawMASUY2, 0x0000ff, TRUE); // è’¼è‰²ã§æç”»
+						// æç”»ãƒ–ãƒ¬ãƒ³ãƒ‰ãƒ¢ãƒ¼ãƒ‰ã‚’å…ƒã«æˆ»ã™
 						SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 					}
 				}
@@ -263,7 +283,7 @@ VOID Player::PlayerMove() {
 		}
 	}
 }
-
+//ã‚¢ã‚¤ã‚³ãƒ³waitã®ã‚·ãƒ§ãƒƒãƒˆã‚­ãƒ¼
 VOID Player::PlayerWaitMessage(){
 
 	DrawString(pUIMessageX, pUIMessageY, "Wait\nkey: s", 0xffffff);
@@ -274,26 +294,26 @@ VOID Player::PlayerWaitMessage(){
 
 VOID Player::PlayerUiUpdata() {
 
-	//ˆÚ“®
+	//ç§»å‹•
 
 
-	//’ÊíUŒ‚@ƒfƒoƒbƒO‘ÎÛ‚ª‚È‚¢ˆ×ÅŒã‚Åì‚é
+	//é€šå¸¸æ”»æ’ƒã€€ãƒ‡ãƒãƒƒã‚°å¯¾è±¡ãŒãªã„ç‚ºæœ€å¾Œã§ä½œã‚‹
 
-	//ƒAƒCƒeƒ€
+	//ã‚¢ã‚¤ãƒ†ãƒ 
 
-	//‘Ò‹@@ƒvƒŒƒCƒ„‚ÌÅ‘å20%‚ÌHP‚Æ15%MP‚ğ‰ñ•œ‚·‚é
+	//å¾…æ©Ÿã€€ãƒ—ãƒ¬ã‚¤ãƒ¤ã®æœ€å¤§20%ã®HPã¨15%MPã‚’å›å¾©ã™ã‚‹
 
-	//“Á«@ƒpƒbƒVƒuƒXƒLƒ‹ Œø‰ÊĞ‰î‚¾‚¯@ˆê•C˜TF©•ª‚Ì‚Pƒ}ƒX‚É–¡•û‚ª‚È‚¢ê‡@ƒXƒe[ƒ^ƒX{‚Q
+	//ç‰¹æ€§ã€€ãƒ‘ãƒƒã‚·ãƒ–ã‚¹ã‚­ãƒ« åŠ¹æœç´¹ä»‹ã ã‘ã€€ä¸€åŒ¹ç‹¼ï¼šè‡ªåˆ†ã®ï¼‘ãƒã‚¹ã«å‘³æ–¹ãŒãªã„å ´åˆã€€ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ï¼‹ï¼’
 
-	/*ƒXƒLƒ‹ ƒŒƒxƒ‹ƒAƒbƒv‚²‚Æ‚ÉƒXƒLƒ‹ƒ|ƒCƒ“ƒg‚ª–á‚¦‚é@
-	ƒXƒLƒ‹‚P@‘o˜AŒ‚@‘ÎÛ‚É˜AŒ‚‚Ì“ñ‰ñ’ÊíUŒ‚‚·‚é@–½’†—¦75“/77.5%/80%/85%
-	–½’†—¦”»’è‚µ@miss‚Ìê‡@“–ƒLƒƒƒ‰‚ÌUŒ‚ƒ^[ƒ“‚ğI—¹‚ÆŒ©‚È‚·
-	–½’†‚Ìê‡@’ÊíUŒ‚‚Ì‚Q‰ñ Critical strike‚ğ”»’è‚µ
-	Critical strike”»’è¬Œ÷@’Êíƒ_ƒ[ƒW‚Ì1.5/1.65/1.8/2.0‚ğ‘ÎÛ‚É—^‚¦‚é
-	MPÁ–Õ@‚V/9/11/9
-	—â‹pŠÔicdj3T/3T/3T/2T
-	æ“¾‰Â”\‚ÌƒLƒƒƒ‰‚ÌƒŒƒxƒ‹@0/2/4/6 
-	@
+	/*ã‚¹ã‚­ãƒ« ãƒ¬ãƒ™ãƒ«ã‚¢ãƒƒãƒ—ã”ã¨ã«ã‚¹ã‚­ãƒ«ãƒã‚¤ãƒ³ãƒˆãŒè²°ãˆã‚‹ã€€
+	ã‚¹ã‚­ãƒ«ï¼‘ã€€åŒé€£æ’ƒã€€å¯¾è±¡ã«é€£æ’ƒã®äºŒå›é€šå¸¸æ”»æ’ƒã™ã‚‹ã€€å‘½ä¸­ç‡75ï¼…/77.5%/80%/85%
+	å‘½ä¸­ç‡åˆ¤å®šã—ã€€missã®å ´åˆã€€å½“ã‚­ãƒ£ãƒ©ã®æ”»æ’ƒã‚¿ãƒ¼ãƒ³ã‚’çµ‚äº†ã¨è¦‹ãªã™
+	å‘½ä¸­ã®å ´åˆã€€é€šå¸¸æ”»æ’ƒã®ï¼’å› Critical strikeã‚’åˆ¤å®šã—
+	Critical strikeåˆ¤å®šæˆåŠŸã€€é€šå¸¸ãƒ€ãƒ¡ãƒ¼ã‚¸ã®1.5/1.65/1.8/2.0ã‚’å¯¾è±¡ã«ä¸ãˆã‚‹
+	MPæ¶ˆè€—ã€€ï¼—/9/11/9
+	å†·å´æ™‚é–“ï¼ˆcdï¼‰3T/3T/3T/2T
+	å–å¾—å¯èƒ½ã®ã‚­ãƒ£ãƒ©ã®ãƒ¬ãƒ™ãƒ«ã€€0/2/4/6 
+	ã€€
 	*/
 
 }

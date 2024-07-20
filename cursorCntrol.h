@@ -4,7 +4,7 @@
 #include "player.h"
 class Cursor {
 
-public:
+private:
 	int x1;       //カーソルの左上のｘ座標
 	int x2;       //カーソルの左上のｙ座標
 	int y1;       //カーソルの右下のｘ座標
@@ -19,20 +19,20 @@ public:
 	char key[256];
 	
 
-	LONGLONG lastMoveTime;  //by gtp 最後に移動した時刻を記録する変数
-	LONGLONG lastBlinkTime;  // gtp最後に点滅した時刻
-	const LONGLONG blink = 800000;//gtp点滅間隔
+	LONGLONG lastMoveTime;  // 最後に移動した時刻を記録する変数
+	LONGLONG lastBlinkTime;  // 最後に点滅した時刻
+	const LONGLONG blink = 800000;//点滅間隔
 
+	
+	tagE_PLAYER_UI_T playerUI_Is;//playerUI今はどいう状態なのかの列挙体宣言
+
+public:
 	BOOL isPlayerUICursor;//プレイヤUIカーソルの出現／消失
 	BOOL isMapCursor;//マップカーソルの出現／消失
-	BOOL isBlink;  // gtp点滅効果のための表示フラグ
-	BOOL isPlayerSelected; //by gtp プレイヤーが選択されているかを示すフラグ
+	BOOL isBlink;  // 点滅効果のための表示フラグ
+	BOOL isPlayerSelected; //プレイヤーが選択されているかを示すフラグ
 	BOOL isPlayerMoveShow; //プレイヤーのMove2表示状態フラグ
-
-	Player& player; // /by gtp プレイヤーの参照
-
-	E_PLAYER_UI_T playerUI_Is;//playerUI今はどいう状態なのかの列挙体宣言
-
+	Player& player; // / プレイヤーの参照
 	Cursor(Player& player);
 	VOID CursorControl();//カーソル制御
 	VOID CursorDraw();    //マップカーソル描画

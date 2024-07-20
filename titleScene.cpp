@@ -10,8 +10,8 @@ float opitionY;  //　ゲーム設定のy位置
 int cursorY;     //  カーソル移動の上下情報
 int gHandle;     //  バックグラウンド画面の保存場所
 int cursorHandle;//　メニュー選択用カーソル
-LONGLONG titleLastMoveTime = 0; // gtp 最後に移動した時刻を記録する変数
-const LONGLONG titleMoveInterval = 200000;  // gtp  移動のタイミングを制御するための間隔（マイクロ秒）
+LONGLONG titleLastMoveTime = 0; //  最後に移動した時刻を記録する変数
+const LONGLONG titleMoveInterval = 200000;  //   移動のタイミングを制御するための間隔（マイクロ秒）
 
 //メニューの初期化
 void TitleMenuInit( ) {
@@ -49,7 +49,7 @@ void BackGroundDraw( ) {
 void TitleMenuUpdate( ) 
 {
 
-	LONGLONG currentTime = GetNowHiPerformanceCount();  // gtp 現在の時刻を取得
+	LONGLONG currentTime = GetNowHiPerformanceCount();  //  現在の時刻を取得
 
 	if (currentTime - titleLastMoveTime > titleMoveInterval) { //現在の時間　-　過去の時間　＞　自分が設定した時間の場合
 		if (KeyDown(KEY_INPUT_DOWN) == 1)  //↓のキーが押されていたら

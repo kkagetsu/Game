@@ -176,7 +176,7 @@ BOOL isLoading(BOOL load) {
 
 //シナリオ描画
 VOID ScenarioDraw() {
-	static int totalLength = 0; // すべての文字の総数
+	static size_t totalLength = 0; // すべての文字の総数
 	static char displayStr[256 * COLUMN_COUNT] = ""; // 表示する文字列
 	static int t = 0;//タイマー
 	static int tmax = 15;//タイマーの上限
@@ -195,7 +195,7 @@ VOID ScenarioDraw() {
 		if (currentPos < totalLength)    //totalLength＞currentPos(0)の場合は一つしかない　テキストがまだ完全に描画終わてない　
 		{
 			int line = 0;               
-			int pos = currentPos;
+			size_t pos = currentPos;
 			while (pos >= strlen(buff[line])) {
 				pos -= strlen(buff[line]);
 				line++;
@@ -219,7 +219,7 @@ VOID ScenarioDraw() {
 
 
 
-	if (messageDisplayed == TRUE) {
+	if (messageDisplayed == TRUE) { //シナリオの描画が終わったら
 		
 		const int x1 = 100;
 		const int x2 = 300;
@@ -229,43 +229,43 @@ VOID ScenarioDraw() {
 		int mx = 0, my = 0;
 		const int yUp = 30;
 
-		GetMousePoint(&mx,&my);
+		GetMousePoint(&mx,&my);  //マウスの現在位置を取得し
 		//0
-		if (mx >= x1 && mx <= x2 && my >= y1 && my <= y2) {
+		if (mx >= x1 && mx <= x2 && my >= y1 && my <= y2) {//もしマウスの現在座標がコウタロウの画像範囲内　当画像が浮上
 			DrawExtendGraph(x1, y1 - yUp,
 				x2, y2 - yUp,
 				playersGraph[KOUTAROU], TRUE);
 
-			DrawString(x1, y2 - yUp + 1, "コウタロウ\n(左クリック長押しで決定)", 0xFB544E);
+			DrawString(x1, y2 - yUp + 1, "コウタロウ\n(左クリック長押しで決定)", 0xFB544E);//操作メッセージを描画
 
-			if (GetMouseInput() & MOUSE_INPUT_LEFT) {
+			if (GetMouseInput() & MOUSE_INPUT_LEFT) {//左クリックを長押し一秒以上だったら　選択されたキャラ画像が点滅
 				static int t = 0;
 				const int tMax = 100;
 				// 現在の時間を取得
 				int nowTime = GetNowCount();
 
 				// 背景色を設定
-				unsigned int color = GetFlashingColor(nowTime);
+				unsigned int color = GetFlashingColor(nowTime);//点滅用関数
 
 				// 画面全体を塗りつぶす
-				DrawBox(x1, y1 - yUp, x2,y2 - yUp, color, TRUE);
+				DrawBox(x1, y1 - yUp, x2,y2 - yUp, color, TRUE);//点滅用関数
 				DrawExtendGraph(x1, y1 - yUp,
 					x2, y2 - yUp,
 					playersGraph[KOUTAROU], TRUE);
 				t++;
-				if (t > tMax) {
+				if (t > tMax) {//一秒以上長押ししったらシナリオシナリオをoffしイベントtalkに移す
 					isScenario = FALSE;
 					t = 0;
 				}
 
 			}
 		}
-		else {
+		else {//選択されていない時　キャラの絵を描画だけ
 			DrawExtendGraph(x1, y1,
 				x2, y2,
 				playersGraph[KOUTAROU], TRUE);
 		}
-		//1
+		//1 ボブはコウタロウと同じロジック
 	    if(mx >= x1 + span + 10&& mx<= x2 + span + 10 && my>= y1 && my<= y2){
 		
 			DrawExtendGraph(x1 + span + 10, y1 - yUp,
@@ -279,7 +279,7 @@ VOID ScenarioDraw() {
 				x2 + span + 10, y2 ,
 				playersGraph[BOBU], TRUE);
 		}
-		//2
+		//2 田中はコウタロウと同じロジック
 		if(mx >= x1 + span * 2 + 20 && mx <= x2 + span * 2 + 20 && my >= y1 && my <= y2){
 			DrawExtendGraph(x1 + span * 2 + 20, y1 - yUp,
 				x2 + span * 2 + 20, y2 - yUp,
@@ -294,7 +294,7 @@ VOID ScenarioDraw() {
 		}
 
 	}
-	// Zキーが押されたら再生速度二倍になる
+	// // Zキーが押されたらシナリオの再生速度を二倍（加速）にする
 	if (CheckHitKey(KEY_INPUT_Z) == 1) {
 		tmax = 1;
 	}
@@ -302,7 +302,7 @@ VOID ScenarioDraw() {
 	if (CheckHitKey(KEY_INPUT_S) == 1 && !messageDisplayed) {
 		while (currentPos < totalLength) {
 			int line = 0;
-			int pos = currentPos;
+			size_t pos = currentPos;
 			while (pos >= strlen(buff[line])) {
 				pos -= strlen(buff[line]);
 				line++;
@@ -315,7 +315,7 @@ VOID ScenarioDraw() {
 	}
 	DrawString(200,0,"Skip =[Sキー],二倍速 =[Zキー]",0xffffff);
 }
-
+//lineよりgridという言葉使った方がいい
 VOID FieldLineDraw() {
 	
 	//縦線を描く
@@ -382,7 +382,7 @@ VOID FieldLaOutDraw() {
 			//
 			//	DrawExtendGraph(MASU___SIZE * y, MASU___SIZE * x, MASU___SIZE + MASU___SIZE * y, MASU___SIZE + MASU___SIZE * x, GHandleStone, TRUE);
 			//}		
-
+			//ここのX,Yがオーバロードされたので後ほど修正しましょう
 			int graphHandle;
 			switch (g_layout[x][y]) {
 			case LAYOUT_GRASS:
@@ -419,16 +419,25 @@ VOID FieldLaOutDraw() {
 int t1 = 0;
 //チュートリアルイベント
 VOID EventTutorial() {
-	const int xNameStart = 30;
-	const int yNameStart = 500;
+	const int xNameStart = 30; //キャラ名を描画するX座標
+	const int yNameStart = 500;//キャラ名を描画するY座標
 	const int span = 30;
-	const int times = 2;
-	if (t1 > 300 * times)
+	const int times = 2;       //時間xtimes倍率
+	if (t1 > 300 * times)      //もしボブが喋ったら　コウタロウが登場させる
 	{
 		DrawExtendGraph(30, 80, 480, 480, playersGraph[KOUTAROU], TRUE);
 	}
 	//DrawExtendGraph(30, 80,480,480, playersGraph[KOUTAROU],TRUE);
-	DrawExtendGraph(370,80,920,480, playersGraph[BOBU],TRUE);
+	DrawExtendGraph(370,80,920,480, playersGraph[BOBU],TRUE);//ボブが最初登場するキャラ
+
+	//名前,しゃべりの内容
+	/*
+	DrawMasage(string name,string tork,unsinged int cr)
+	{
+			DrawString(xNameStart, yNameStart, name, 0xffffff);
+			DrawString(xNameStart + span, yNameStart + span, tork, cr);
+	}
+	*/
 	
 		if (t1 < 300 * times)
 		{
@@ -456,17 +465,17 @@ VOID EventTutorial() {
 		{
 			DrawString(xNameStart, yNameStart, "コウタロウ", 0xffffff);
 			DrawString(xNameStart + span, yNameStart + span, "『良い構えだ、全力で来い！』", 0xFB544E);
-			if (t1 > 3000 * times) {
+			if (t1 > 3000 * times) { //イベント会話終了戦闘に入る
 				isEventTutorial = FALSE;
 			}
 		}
 
 		t1++;
-		if (CheckHitKey(KEY_INPUT_S) == 1) {
+		if (CheckHitKey(KEY_INPUT_S) == 1) { //skip機能
 			t1 = 3000*times;
 		}
 
-		DrawString(700, 580, "Skip = [Sキー]", 0xffffff);
+		DrawString(670, 580, "Skip = [Sキー]", 0xffffff);
     
 }
 //VOID Deleteghandle() {
