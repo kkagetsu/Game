@@ -2,6 +2,27 @@
 
 #include "Dxlib.h"
 
+/*
+
+
+確定/次へ　SPACE
+
+キャンセル Q[Quit]
+
+Skip[S]
+
+
+
+*/
+
+
+
+
+
+
+
+
+
 //マクロ定義
 #define KEYKINDMAX 256 //キーの種類
 

@@ -3,17 +3,17 @@
 
 // コンストラクタ カーソルの情報を初期化
 Cursor::Cursor(Player& player) : player(player) {
-    this->x1 = (GRID__WIDTH - 1) * MASU___SIZE;
-    this->x2 = GRID__WIDTH * MASU___SIZE;
-    this->y1 = (GRID_HEIGHT - 1) * MASU___SIZE;
-    this->y2 = GRID_HEIGHT * MASU___SIZE;
+    this->x1 = (GRID__WIDTH - 1) * MASU___SIZE;  //カーソルの初期生成地　X１
+    this->x2 = GRID__WIDTH * MASU___SIZE;        //カーソルの初期生成地　Y１
+    this->y1 = (GRID_HEIGHT - 1) * MASU___SIZE;  //カーソルの初期生成地　X２
+    this->y2 = GRID_HEIGHT * MASU___SIZE;        //カーソルの初期生成地　Y２
 
     this->isMapCursor = TRUE; // TRUEの場合 マップカーソル描画ON
 
-    this->playerX1 = 560;
-    this->playerY1 = GRID_HEIGHT * MASU___SIZE;
-    this->playerX2 = 560 + MASU___SIZE;
-    this->playerY2 = GRID_HEIGHT * MASU___SIZE + MASU___SIZE;
+    this->playerX1 = 560;                                     //playerUIカーソルの初期生成地　X１
+    this->playerY1 = GRID_HEIGHT * MASU___SIZE;               //playerUIカーソルの初期生成地　Y１
+    this->playerX2 = 560 + MASU___SIZE;                       //playerUIカーソルの初期生成地　X２
+    this->playerY2 = GRID_HEIGHT * MASU___SIZE + MASU___SIZE; //playerUIカーソルの初期生成地　Y２
 
     this->isPlayerUICursor = FALSE; // 初期状態でプレイヤUIカーソルを非表示
 
@@ -89,15 +89,43 @@ VOID Cursor::CursorControl() {
             lastMoveTime = currentTime;
         }
 
+        // mapカーソルをプレイヤを指定する  
+       //this->x1 == player.getPosX() * MASU___SIZE カーソルのX＝プレイヤのX 　TRUE
+       //this->x1 == player.getPosX() * MASU___SIZE カーソルのY＝プレイヤのY　 TRUE
+       //両方が１になると　isPlayerSelected= TRUE
+        this->isPlayerSelected = (this->x1 == player.getPosX() * MASU___SIZE && this->y1 == player.getPosY() * MASU___SIZE);
+    }
+
+
         if (this->isPlayerSelected == TRUE && this->key[KEY_INPUT_SPACE] == 1) { // カーソルの座標がプレイヤの座標と一致する場合
             isMapCursor = FALSE;
             lastMoveTime = currentTime;
         }
-        this->isPlayerSelected = (this->x1 == player.getPosX() * MASU___SIZE && this->y1 == player.getPosY() * MASU___SIZE);
-    }
+       
     if (this->isPlayerMoveShow == TRUE) {
-        player.PlayerMove(); // プレイヤーの移動範囲を表示する
+        player.PlayerAbleMove(); // プレイヤーの移動範囲を表示する
     }
+
+    //移動範囲が表示しかつ移動範囲の中にmapカーソルも描画した場合
+    if (this->isPlayerMoveShow == TRUE && this->isMapCursor == TRUE) {
+        //指定場合を確定したらspaceキを押し　キャラの座標 ＝　指定座標
+        if (this->key[KEY_INPUT_SPACE] == 1)
+        {  
+            
+            int decideNewX1 = this->x1/ MASU___SIZE; //x1 = x1 * MASU___SIZE 
+            int decideNewY1 = this->y1/ MASU___SIZE;
+            //指定座標をキャラ座標の中に代入(セットset)           
+            player.setPosX(decideNewX1);
+            player.setPosY(decideNewY1);
+            player.PlayerAction--;
+            
+        }
+
+
+    }
+  
+    
+    
 }
 
 // カーソル描画
@@ -231,7 +259,7 @@ VOID Cursor::PlayerUIControl() {
         if (this->key[KEY_INPUT_M] == 1) {
             this->isPlayerMoveShow = TRUE; // TRUEになり TRUEなるとキャラの移動範囲マスを描画
             this->isPlayerUICursor = FALSE; // 同時にplayerUIカーソルの制御をoffする
-            this->isMapCursor = TRUE; // 描画し（移動範囲はplayermoveのマス中）
+            this->isMapCursor = TRUE; // 描画し（移動範囲はPlayerAbleMoveのマス中）
         }
         break;
     case PLAYER_UI_ATTACK:
@@ -260,6 +288,7 @@ VOID Cursor::Switching() {
         if (this->key[KEY_INPUT_X] == 1) { // プレイヤUIからエスケープ
             isMapCursor = FALSE; // マップカーソル描画OFFし
             isPlayerUICursor = TRUE; // プレイヤUIカーソル描画ON プレイヤUIカーソルに切り替える
+ //         isPlayerSelected = false; // 初期状態ではプレイヤーは選択されていない
         }
     }
 }
